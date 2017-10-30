@@ -1,5 +1,4 @@
 // Bootstrap imports (jquery & tether in index.html)
-import 'bootstrap/dist/js/bootstrap.min.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Font-awesome
