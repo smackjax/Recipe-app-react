@@ -1,0 +1,8 @@
+.friend-filter-wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.friend-filter-wrapper .friend-filter:first-child{
+    margin-right: 40px;
+}

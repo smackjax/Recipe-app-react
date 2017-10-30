@@ -1,0 +1,19 @@
+.recipe-details-header.editing{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 95%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.recipe-details-header.editing .btn{ 
+    font-size: 1.1rem;
+}
+.cancel-recipe-btn{
+    width: 40%;
+    color: #d9534f;
+}
+.save-recipe-btn{
+    width: 40%;
+}

@@ -1,0 +1,19 @@
+.smckjx-navbar{
+    background-color: rgb(218,218,218);
+    margin-bottom: 10px;
+}
+.smckjx-nav-wrap{
+    display: flex;
+    align-self: center;
+    justify-content: space-around;
+    margin: auto;
+    width: 90%;
+    max-width: 300px;
+}
+.smckjx-nav-link {
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: 5px 10px; 
+    font-size: 1.6rem;
+    color: rgb(72,116,171);
+}

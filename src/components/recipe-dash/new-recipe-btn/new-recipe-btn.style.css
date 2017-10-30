@@ -1,0 +1,20 @@
+.new-recipe-btn{
+    z-index: 1000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 0px;
+    width: 90%;
+    max-width: 200px;
+    height:40px;
+
+    left: 0;
+    right: 0;
+    margin: auto;
+
+    border-radius: 10px 10px 0 0;
+    background-color: rgb(66,106,156);
+    font-size: 1.6rem;
+    color: rgb(235,235,235);
+}
