@@ -8,7 +8,7 @@ STORED DATA
     verified: true,
     jwt: ''
 */
-import FAKEDATA from './FAKESTATE.js';
+
 //TODO switch username,... to under user.username,...
 
 // Paranoid about getting data string wrong

@@ -1,7 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { createNewUser, loginExistingUser } from '../../_data/serverData';
+import { createNewUser, loginExistingUser} from '../../_data/serverData';
+
 import Dropdown from '../_dropdown/dropdown.component';
+import SkxInput from '../_input-not-blank/input-not-blank.component';
+import UsernameInput from './username-input/username-input.component';
+import DisplayNameInput from './display-name-input/display-name-input.component';
+
+import SwitchUserTypeBtn from './switch-user-type-btn/switch-user-type-btn.component';
+
 import Logo from '../../_resources/logo.svg';
 import './login.style.css';
 
@@ -27,31 +34,26 @@ export default class LoginComponent extends React.Component{
     
     state={
         loginFail: false,
-        newUser: false,
+        newUser: true,
 
-
-        checkingUsername: true,
-        usernameAvailable: true,
-
-        errors: {
-            passwordsMatch: true,
-
+        checkingUsername: false,
+        usernameAvailable: false,
+        validUsername: true,
+        
+        formStatus: {
+            // usernameInput
         }
+        
     }
+
+    // Switches between new and existing user logins
     switchUserLogin(){
         const isNewUser = !this.state.newUser;
         this.setState({newUser: isNewUser});
     }
 
-    // Checks if username is available from server
-    checkUsernameAvailability(usernameString){
-        // TODO (maybe use settimeout to avoid server stress)
-        const result = true;
-        this.setState({usernameAvailable: result});
-    }
-
     handleSubmit(e){
-        // Handles new user and existing sign in
+        // Handles both new and existing user sign in
         e.preventDefault();
         const formElem = e.target;
         let signInResult;
@@ -70,81 +72,91 @@ export default class LoginComponent extends React.Component{
         }
     }
 
+    setReady(inputName, readyStatus){
+        if(this.state.formStatus[inputName] !== readyStatus){
+            const totalStatus = {
+                ...this.state.formStatus,
+                [inputName] : readyStatus
+            }
+            this.setState(totalStatus);
+        }
+    }
+
+
     render(){
         return (
             <div className="login-existing-user-page">
                 <div className="login-logo-wrapper">
                     <img src={Logo} className="login-logo-img" />
                 </div>
+                <Dropdown open={this.state.newUser}>
+                    <h3 className="welcome-text-header">Hello! Please create an account.</h3>     
+                </Dropdown>
+                <Dropdown open={!this.state.newUser}>
+                    <h3 className="welcome-text-header">Welcome back!</h3>     
+                </Dropdown>
                 <form onSubmit={this.handleSubmit.bind(this)}>
                     <div className="login-form-content-wrapper">
-                        <div className="login-input-group">
-                            
-                            <label className="login-input-label">Username* 
-                                <span style={{display: this.state.newUser ? 'initial' : 'none'}} className="username-check-result">
-                                    
-                                    {this.state.checkingUsername ? 
-                                        <i className="fa fa-spinner"></i> :
-                                            this.state.usernameAvailable ?
-                                                <i className="text-success fa fa-thumbs-up"></i> : 
-                                                    <i className="text-danger fa fa-thumbs-down"></i>
-                                    }
-                                </span>
-                            </label>
-                            <input type="text"
-                            required
-                            name="loginUsername"
-                            className="form-control login-input"/>
-                        </div>
-                        
-                        <Dropdown open={this.state.newUser} >
-                            <div className="login-input-group">
-                                <label className="login-input-label">Display name*</label>
-                                <input type="text"
-                                name="loginDisplayName"
-                                className="form-control login-input"/>
-                            </div>
-                        </Dropdown>
+
+                        <UsernameInput
+                        setReady={this.setReady.bind(this)}
+                        className="login-input-group"/>
+
+
+                        <DisplayNameInput 
+                        newUser={this.state.newUser} 
+                        setReady={this.setReady.bind(this) } 
+                        className="login-input-group" />
+
+    
 
                         <div className="login-input-group">
                             <label className="login-input-label">Password*</label>
-                            <input 
+                            <SkxInput 
                             required
                             type="password"
                             name="loginPass"
                             className="form-control login-input"/>
                         </div>
+
                         <Dropdown open={this.state.newUser}>
                             <div className="login-input-group">
                                 <label className="login-input-label">Confirm Password*</label>
-                                <input 
+                                <SkxInput 
                                 type="password"
                                 name="loginPassConfirm"
                                 className="form-control login-input"/>
                             </div>
                         </Dropdown>
-
-                        <input type="submit" className="btn login-submit-btn"/>
+                        <div className="login-form-btns-wrapper">
+                            <input 
+                            type="reset"
+                            value="Clear" 
+                            className="btn btn-danger login-form-btn login-reset-btn" />
+                            
+                            <input 
+                            type="submit" 
+                            value="Login"
+                            className="btn bg-blue login-form-btn  login-submit-btn"/>
+                        </div>
                     </div>
                 </form>
 
                 <div className="other-options-wrapper">
                     <Dropdown 
                     open={!this.state.newUser}>
-                        <button
-                        onClick={this.switchUserLogin.bind(this)}
-                        className="btn" >
+                        <SwitchUserTypeBtn
+                        onClick={this.switchUserLogin.bind(this)} >
                             New user
-                        </button>
+                        </SwitchUserTypeBtn>
                     </Dropdown>
 
                     <Dropdown 
                     open={this.state.newUser}>
-                        <button
-                        onClick={this.switchUserLogin.bind(this)}
-                        className="btn" >
-                            Existing user
-                        </button>
+                        <SwitchUserTypeBtn
+                        onClick={this.switchUserLogin.bind(this)} >
+                            Already have an account 
+                        </SwitchUserTypeBtn>
                     </Dropdown>
                 </div>
                 

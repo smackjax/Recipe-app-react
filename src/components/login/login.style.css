@@ -1,8 +1,25 @@
+.login-existing-user-page{
+    width: 90%;
+    max-width: 650px;
+    margin: 0px auto;
+}
 .login-logo-wrapper{
     width: 150px;
-    margin: 30px auto;
+    margin: 30px auto 40px;
 }
 .login-logo-img{
     width: 100%;
     height: auto;
+}
+.login-input-group{
+    margin: 15px auto;
+}
+.login-form-btns-wrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin: 30px auto;
+}
+.login-form-btn {
+    width: 40%;
 }
