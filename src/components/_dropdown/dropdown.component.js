@@ -1,6 +1,6 @@
 import React from 'react';
 import uniqid from 'uniqid';
-
+import './dropdown.style.css';
 
 export default class DropdownComponent extends React.Component{
     // props.open
@@ -10,11 +10,7 @@ export default class DropdownComponent extends React.Component{
     }
     state={
         dropdownId: '',
-        dropStyles: {
-            overflow: 'hidden',
-            maxHeight: '0px', 
-            transition: 'max-height .5s ease'
-        }
+        currentHeight: '0px'
     }
     componentDidMount(){
         const newDropId = uniqid('dropdown-');
@@ -23,30 +19,32 @@ export default class DropdownComponent extends React.Component{
         });
     }
     componentWillReceiveProps(newProps){
-        
         this.adjustHeight(newProps.open);
-
     }
+
     adjustHeight(isOpen){
         const dId = this.state.dropdownId;
         const dropdownElem = document.getElementById(dId);
-        let maxHeightStyle = '0px';
+        let maxOpenHeight = '0px';
         if(dropdownElem){
-            maxHeightStyle = dropdownElem.scrollHeight + "px";
+            maxOpenHeight = dropdownElem.scrollHeight + "px";
         }
-        // If 'open' set the dropdown max height to most possible
-        const currentDropHeight = isOpen ? 
-            maxHeightStyle :
+        // If 'open' set the dropdown max height to maximum
+        const newDropHeight = isOpen ? 
+            maxOpenHeight :
                 '0px';
         
-        this.setState({
-            dropStyles: {...this.state.dropStyles, maxHeight: currentDropHeight}
-        }); 
+        this.setState({ currentHeight: newDropHeight }); 
     }
 
     render(){
+        const maxHeight = {maxHeight: this.state.currentHeight};
+        const dropClasses = "ez-dropdown " + (this.props.className || "" );
         return (
-            <div className={this.props.className} style={this.state.dropStyles} id={this.state.dropdownId}>
+            <div 
+            className={dropClasses} 
+            style={maxHeight} 
+            id={this.state.dropdownId}>
                 {this.props.children}
             </div>
         )

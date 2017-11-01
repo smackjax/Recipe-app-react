@@ -5,12 +5,13 @@ import SkxInput from '../../_input-not-blank/input-not-blank.component';
 import CheckUsernameStatus from './check-status/check-status.component';
 
 export default class UsernameInput extends React.Component {
-    // props.setReady(inputName, bool)
+    // props.newUser
+    // props.name
 
     state={
         isBlank: false,
         invalid: false,
-        checkingUsername: false,
+        checkingUsername: null,
         usernameAvailable: null
     }
 
@@ -36,41 +37,43 @@ export default class UsernameInput extends React.Component {
         this.setState({
             invalid: !e.target.isValid 
         });    
-        
-
         if(e.target.isValid){
-            if(this.state.newUser){
+            if(this.props.newUser){
                 this.checkUsernameAvailability(e.target.value);
             }
-            this.props.setReady(e.target.name, true);
-        } else {
-            this.props.setReady(e.target.name, false);
         }
     }
 
     render(){
+        const newUser = this.props.newUser;
         return (
             <div className={this.props.className}>
                 
-                <label className="login-input-label">
-                    Username* &nbsp;
-                    <CheckUsernameStatus 
-                    newUser={this.state.newUser}
+                {this.state.checkingUsername !== null && 
+                <CheckUsernameStatus 
+                    newUser={newUser}
                     checkingUsername={this.state.checkingUsername}
-                    usernameAvailable={this.state.usernameAvailable} />    
-                </label>
+                    usernameAvailable={this.state.usernameAvailable} />
+                }
 
+                <label htmlFor="login-username-input" className="login-input-label">
+                    Username{ newUser ? " (How people find you)" : " / Email" }
+                    
+                </label>
+                
                 <SkxInput type="text"
-                reverseRegex={/\W/}   
+                reverseRegex={newUser ? /\W/ : false}   
                 onChange={this.handleUsername.bind(this)}
                 required
                 maxLength="20"
-                name="loginUsername"
+                id="login-username-input"
+                name={this.props.name || "loginUsername"}
                 className="form-control login-input"/>
-                
+                 
+  
                 <Dropdown open={this.state.invalid}>
                     <div className="alert alert-danger">
-                     Cannot be blank. Only letters, numbers, underscores, and spaces allowed.
+                     Cannot be blank. {newUser && "Only letters, numbers, underscores, and spaces allowed."}
                     </div>
                 </Dropdown>
             </div>

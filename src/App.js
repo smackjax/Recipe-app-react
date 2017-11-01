@@ -13,7 +13,9 @@ import FriendSwitch from './components/friend-switch/friend-switch.component';
 
 import SettingsPage from './components/settings/settings.component';
 
+import './Animations.css';
 import './App.css';
+
 
 class App extends Component {
   state={

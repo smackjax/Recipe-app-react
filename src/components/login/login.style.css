@@ -12,7 +12,11 @@
     height: auto;
 }
 .login-input-group{
-    margin: 15px auto;
+    margin: 8px auto;
+}
+
+.login-input-group .alert{
+    margin-bottom: 0;
 }
 .login-form-btns-wrapper{
     display: flex;

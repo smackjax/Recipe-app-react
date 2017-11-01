@@ -12,13 +12,15 @@ const api = axios.create({
 
 // ** Login/create new
 // Returns only this user's info
-export const createNewUser = (username, displayName, password)=>{
+export const createNewUser = (username, email, displayName, password)=>{
     const reqBody = {
         username,
+        email,
         displayName, 
         password
     };
     return api.post('/login/new-user', reqBody);
+    
 }
 export const loginExistingUser = (username, password)=>{
     const reqBody = {

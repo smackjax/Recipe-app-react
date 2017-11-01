@@ -4,38 +4,33 @@ import SkxInput from '../../_input-not-blank/input-not-blank.component';
 
 export default class DisplayNameInput extends React.Component{
     // props.newUser
-    // props.setReady(inputName, bool)
-    // props.errors
+    // props.name
     // props.className
     state={
         invalid: false
     }
 
     handleChange(e){
-        // Sets this state first to ensure correct outer dropdown height
-        const inputName = e.target.name;
-        const isValid = e.target.isValid;
-        this.setState({invalid: !isValid},
-        ()=>{
-            this.props.setReady(inputName, isValid);
-        });        
+        const isInvalid = !e.target.isValid;
+        this.setState({invalid: isInvalid});
     }
 
     render(){
         return(
         <div className={this.props.className}>
             <Dropdown open={this.props.newUser}>
-                <label className="login-input-label">Display name*</label>
+                <label className="login-input-label">Display name* (What others see)</label>
                 <SkxInput
                 type="text"
                 onChange={this.handleChange.bind(this)}
                 maxLength="20"
+                required={this.props.newUser}
                 name={this.props.name || "loginDisplayName"}
                 className="form-control login-input"/>
             </Dropdown>
             <Dropdown open={this.state.invalid}>
                 <div className="alert alert-danger">
-                Cannot be blank
+                    Cannot be blank.
                 </div>
             </Dropdown>
         </div>

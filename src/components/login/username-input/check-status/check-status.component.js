@@ -7,15 +7,15 @@ export default (props)=>{
     // props.usernameAvailable
 
     return props.newUser ? ( // If new user(have to check username)
-        <span className="username-check-result">
+        <div className="username-check-result">
             {
             props.checkingUsername ? 
-            <i className="fa fa-spinner"></i> :
+            <i className="fa fa-spinner animated-loading-spin"></i> :
                 props.usernameAvailable ?
-                    <i className="text-success fa fa-thumbs-up"></i> : 
-                        <i className="text-danger fa fa-thumbs-down"></i>
+                    <span className="text-success"><i className="fa fa-thumbs-up"></i> Available</span>: 
+                        <span className="text-danger "> <i className="fa fa-thumbs-down"></i> Unavailable</span>
             }
-        </span> 
+        </div> 
     ):
         <span></span>
     
