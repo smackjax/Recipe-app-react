@@ -3,6 +3,7 @@ import React from 'react';
 
 // Components
 import SettingsNav from '../_main-nav/main-nav.component';
+import LogoutBtn from './logout-btn/logout-btn.component';
 import ChangeUsername from './change-username/change-username.component';
 import ChangePassword from './change-password/change-password.component';
 import ChangeDisplayName from './change-display-name/change-display-name.component';
@@ -12,6 +13,7 @@ import DeleteAccountBtn from './delete-account-btn/delete-account-btn.component'
 import "./settings.style.css";
 
 export default (props)=>{
+    // props.logout
     // props.userId
     // props.userName
 
@@ -33,6 +35,9 @@ export default (props)=>{
         <SettingsNav />
         <div className="container-fluid settings-page">
             
+            <LogoutBtn 
+            logout={props.logout}/>
+
             <hr/>
 
             <ChangeUsername

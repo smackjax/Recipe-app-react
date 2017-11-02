@@ -12,7 +12,7 @@ export default (props)=>{
             <SkxInput
             type="password"
             required={props.newUser}
-            disabled={props.disabled}
+            disabled={props.disabled || !props.newUser}
             onChange={props.onChange}
             maxLength="20"
             name={props.name || "loginConfirmPassword"}

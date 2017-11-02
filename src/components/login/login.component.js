@@ -64,17 +64,24 @@ export default class LoginComponent extends React.Component{
                     username.value,
                     password.value );
             } 
-                
-                    
-            console.log("Server result: ", signInResult);
-            this.setState({attemptingLogin: false});
-        // Catches sign in problems
-        } catch(e){
+
+            // Retrieve user info from result
+            const userInfo = signInResult.data;
             this.setState({
+                // switch off 'signing in' flag
+                attemptingLogin: false, 
+                errorMsg: ""
+            }, ()=>{
+                // prop function sets data state in main app(this component's parent)
+                this.props.saveUserInfo(userInfo);
+            });
+        } catch(e){
+            // Catches sign in problems
+            console.log('Server error: ', e);
+            this.setState({
+                attemptingLogin: false,
                 errorMsg: 'Problem logging in. Please try again later.'
             });
-            console.log('Server error: ', e);
-            this.setState({attemptingLogin: false});
         }
     }
 

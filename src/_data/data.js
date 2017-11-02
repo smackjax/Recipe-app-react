@@ -275,3 +275,12 @@ export function updatePassword(token, oldPassword, newPassword){
 export function saveUserInfo(newInfo){
     localData.saveUserInfo(newInfo);
 }
+
+export function loadUserInfo(newInfo){
+    return localData.loadUserInfo();
+}
+
+// Just saves empty object to clear values
+export function logoutUser(){
+    localData.saveUserInfo({});
+}

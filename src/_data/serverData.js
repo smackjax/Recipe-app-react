@@ -1,6 +1,6 @@
 import axios from 'axios';
 const api = axios.create({
-    baseURL: "http://localhost:1337/api",
+    baseURL: "api",
     timeout: 5000,
     headers: {"Content-Type" : "application/json"}
 });
@@ -16,7 +16,7 @@ export const createNewUser = (username, email, displayName, password)=>{
     const reqBody = {
         username,
         email,
-        displayName, 
+        displayName,
         password
     };
     return api.post('/login/new-user', reqBody);

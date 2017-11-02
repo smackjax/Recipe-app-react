@@ -25,6 +25,7 @@ export default class DisplayNameInput extends React.Component{
                 onChange={this.handleChange.bind(this)}
                 maxLength="20"
                 required={this.props.newUser}
+                disabled={!this.props.newUser}
                 name={this.props.name || "loginDisplayName"}
                 className="form-control login-input"/>
             </Dropdown>

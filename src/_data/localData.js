@@ -144,3 +144,9 @@ export function saveUserInfo(newInfo){
     const key = masterKey(storageKeys.userInfo);
     setLocalData({...newInfo}, key);
 }
+
+export function loadUserInfo(){
+    const userInfo =
+        getLocalData(masterKey(storageKeys.userInfo)) || {};
+    return userInfo;     
+}

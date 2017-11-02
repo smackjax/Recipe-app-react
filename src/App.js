@@ -3,6 +3,8 @@ import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom
 
 // Data functions
 import * as dataFuncs from './_data/data.js';
+import initialAppState from './_data/initialState.js';
+
 
 // Components
 import  LoginComponent from './components/login/login.component';
@@ -18,23 +20,13 @@ import './App.css';
 
 
 class App extends Component {
-  state={
-    serverDataLoading: false,
-    serverSynchronized: true,
-    recipes: [/*{:recipe}*/],
-    friends: [/*{:friendInfo}*/],
-    userInfo: {
-      "userId" : "",
-      "username" : "",
-      "displayName" : "",
-      "jwt" : ""
-    }
-  }
+  state={...initialAppState }
 
   componentDidMount(){
   // Load data
   // Async so passing in function to update state when resolved
     // and function for flagging load spinned
+
     dataFuncs.loadAllData(
       this.state.token,
       this.setAppData.bind(this),
@@ -53,7 +45,6 @@ class App extends Component {
     if(data.recipes) newVals.recipes = data.recipes;
     if(data.friends) newVals.friends = data.friends;
     if(data.userInfo) newVals.userInfo = data.userInfo;
-    console.log(data.userInfo);
     this.setState(newVals);
   }
   // Controls 'loading' flag
@@ -63,6 +54,7 @@ class App extends Component {
 
   // Sets JWT authorization token(for sign in)
   saveUserInfo(newVals){
+    console.log(newVals);
     // Save new token
     dataFuncs.saveUserInfo(newVals);
 
@@ -72,6 +64,28 @@ class App extends Component {
     // Try to update app data from server with new user info token
       // TODO
   }
+
+
+
+  loginUser(newVals){
+    const handleData = this.setAppData.bind(this);
+    const setLoading = this.setLoading.bind(this);
+    this.saveUserInfo(newVals);
+
+    // Uses the 'set loading' to flip bool in main app state
+    // TODO might be better to move 'loading' switch into this function
+    console.log(newVals.token);
+    dataFuncs.loadAllData(newVals.token, handleData, setLoading);
+  }
+
+  // resets all data and clears local
+  // TODO clear all data, not just userInfo
+  logoutUser(){
+    this.setState({...initialAppState});
+    dataFuncs.logoutUser();
+  }
+
+
 
   // **Recipe Data Handling Funcs
   saveRecipe(newRecipe){
@@ -144,6 +158,7 @@ class App extends Component {
 
     const  PreloadedSettings=()=>{
       return <SettingsPage 
+              logout={this.logoutUser.bind(this)}
               username={this.state.userInfo.userName} 
               displayName={this.state.userInfo.displayName} 
               id={this.state.userInfo.userId} />
@@ -151,8 +166,8 @@ class App extends Component {
 
      // If no JWT under userInfo (not signed in), 
         // return the login page, but do NOT redirect to new path
-    if(!this.state.userInfo.jwt){ 
-      return <LoginComponent saveUserInfo={this.saveUserInfo.bind(this)}/> 
+    if(!this.state.userInfo.token){ 
+      return <LoginComponent saveUserInfo={this.loginUser.bind(this)}/> 
     }
 
     // If there is a JWT, carry on
