@@ -1,5 +1,4 @@
 import React from 'react';
-import TextInput from '../text-input/text-input.component';
 
 export default class UsernameInput extends React.Component{
     // name

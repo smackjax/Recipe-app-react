@@ -1,9 +1,24 @@
+/*
+    **** Master data handling functions
+    The idea is almost all data is from the local storage(except something like updates),
+so local storage is always in sync.
+    If there is a problem connecting to the server, whatever value couldn't be updated is
+added to an array to be passed into the corresponding server function when the next server
+action is taken. 
+    Because of this, server calls after data is loaded(from sign in) can be completely async.
+    Also because of this, whenever new data or actions are taken, the action is first added
+to the backlog, then the backlog is run, and only then (if backlog is successfully cleared),
+is the new data is pulled down and backlog cleared. 
+    On backlog failing to clear, the entire backlog object is saved to localStorage for 
+the next try. Kind of like how gitHub stores an index of changes.
+*/
+
+
 // Updates both localStorage and server
-// Always saves updates to localStorage
 // IF NO CONNECTION TO SERVER
     // Adds to it's respective backlog array
-    // Stores backlog values under keys that match function names on dataFuncMap
-    // Runs backlog on connection established
+    // Pushes value that couldn't complete into backlog array
+    // Runs backlog on next action
     // Sends updated values first, then deletes
     // Sends entire recipe, not just updated recipe values
 
@@ -12,19 +27,9 @@ import * as localData from './localData';
 // Server data functions
 import * as serverData from './serverData';
 
-// maps backlog props to corresponding server function
-const dataFuncMap={
-    // All return bool(for 'completed')
-    // All are promises
-    saveRecipes: serverData.saveRecipes,
-    deleteRecipes: serverData.deleteRecipesById,
-    deleteFriends: serverData.deleteFriendsById
-}
 
 // Stores array of values to be saved(or deleted)
-// Saves array under a key name on dataFuncMap
-// On running, cycles through data and calls its corresponding serverFunction(on dataFuncMap)
-// * Account changes(username, display name, password change) are not stored for later
+// **Account changes(username, display name, password change) are not stored for later
 const backlog = {
     // Holds recipe objects to be saved/updated
     saveRecipes: [/*{:recipe}, {:recipe}*/],
@@ -34,120 +39,117 @@ const backlog = {
     deleteFriends: [/*friendId*/]
 }
 
-// All of these return promises
-async function saveRecipeBacklog(token){ 
-        const saveFunc = dataFuncMap.saveRecipes;
-        return saveFunc(token, backlog.saveRecipes);
-}
-async function deleteRecipeBacklog(token){
-    const deleteFunc = dataFuncMap.deleteRecipes;
-    return deleteFunc(token, backlog.saveRecipes);
-}
-async function deleteFriendBacklog(token){
-    const deleteFunc = dataFuncMap.deleteFriends;
-    return deleteFunc(token, backlog.deleteFriends);
-}
-
 async function saveAllBacklog(token){
     // Run all backlog functions
-    return new Promise((resolve, reject)=>{
-        const actionList = [];
-        // Only attempts to run the list if there is data to update
-        // TODO This is sketchy...
-        if(backlog.saveRecipes.length > 0) actionList.push(saveRecipeBacklog(token));
-        if(backlog.deleteRecipes.length > 0) actionList.push(deleteRecipeBacklog(token));
-        if(backlog.deleteFriends.length > 0) actionList.push(deleteFriendBacklog(token));
-        Promise.all(actionList)
-        .then(success=>{
-            console.log("Success from saveAllBacklog: ", success);
-            resolve(true)})
-        .catch(failure=>reject(false));
-    });
+    let failed = false;
+    // If there are values to send to server
+    if(backlog.saveRecipes.length > 0 || 
+        backlog.deleteRecipes.length > 0 || 
+        backlog.deleteFriends.length > 0){
+    
+        // Only attempts to run each backlog function if there are values
+        // Awaits each function
+        const newBacklog = {};
+        if(backlog.saveRecipes.length > 0) {
+            try{
+                await serverData.saveRecipes(token, backlog.saveRecipes);
+                newBacklog.saveRecipes = [];
+            } catch (e){
+                newBacklog.saveRecipes = [...backlog.saveRecipes];
+                console.log("Save recipes failed");
+                failed = true;
+            } 
+        }
+        if(backlog.deleteRecipes.length > 0) {
+            try{
+                await serverData.deleteRecipesById(token, backlog.deleteRecipes);
+                newBacklog.deleteRecipes = [];
+            } catch (e){
+                newBacklog.deleteRecipes = [...backlog.deleteRecipes];
+                console.log("Delete recipes failed");
+                failed = true;
+            }
+        }
+        if(backlog.deleteFriends.length > 0) {
+            try{
+                await serverData.deleteFriendsById(token, backlog.deleteFriends);
+                console.log("After delete friend");
+                newBacklog.deleteFriends = [];
+            } catch (e){
+                newBacklog.deleteFriends = [...backlog.deleteFriends];
+                console.log("Delete friends failed");
+                failed = true;
+            }
+        }
+        // Save either cleared values or save failed operations to be tried later
+        localData.saveBacklog(newBacklog);
+        if(failed){
+            throw Error("Clearing backlog failed");
+        } else {
+            return true;
+        }
+    } else {
+        // If no backlog
+        return true;
+    }
 }
 
 
 
 // Loads all data
-export async function loadAllData(token, handleNewData, setLoading){
+// ** does not return any JWT, only info for user already logged in
+// Successful server response returns
+// { userInfo: {}, friendsInfo: [{},{},...]}
+export async function loadAllData(token){
     let backlogClear = true;
-    const useLocalData = ()=>{
-        handleNewData(localData.loadAllData());
-        setLoading(false);
-    }
-
+    // Loads unfinished/runs backlog actions
     try{
         // Load any backlog actions from localStorage
         const backlogData = localData.loadBacklog() || {};
         backlog.saveRecipes = backlogData.saveRecipes || [];
         backlog.deleteRecipes = backlogData.deleteRecipes || [];
         backlog.deleteFriends = backlogData.deleteFriends || [];
+
         // Run backlog actions to update server
         // Awaits completion so local changes aren't overridden
-        const success = await saveAllBacklog(token);
+        await saveAllBacklog(token);
         // If no errors in 'success'(result of promise), then backlog is clear
-        backlogClear = true;
     } catch(err) {
         console.log('Problem clearing backlog: ', err);
-        useLocalData();
         backlogClear = false;
+        return localData.loadAllData();
     }
 
     // If no backlog actions need to be taken, load data from server
     if(backlogClear){
-        // Load all data from server
-        setLoading(true);
-        serverData.getUserData()
-        .then( allUserData => {
-            // This info refreshes current info, in case of change
-                // but an id JWT is only obtained through login
-            const user = allUserData.userInfo;
-            const userInfo = {
-                userId: user.userId,
-                username: user.username,
-                displayName: user.displayName
-            };
-
-            // Extracts all user and friend recipes into this array
-            const recipes = [];
-            const userRecipeIds = Object.keys(user.recipes);
-            for(let uRId of userRecipeIds){
-                recipes.push(user.recipes[uRId]);
-            }
+        try{
+            // Load all data from server based on JWT
+            const allUserData = 
+                await serverData.getUserData(token)
+            // This user info refreshes current info, in case of change
+                // *** but an id JWT is only obtained through login  
+            const userInfo = allUserData.userInfo;
+            const friends = allUserData.friendsInfo;
             
-            // Builds info obj for each friend
-            const friends = [];
-            for(let friend of allUserData.friendsInfo){
-                const friendInfo = {
-                    userId: friend.userId,
-                    username: friend.username,
-                    displayName: friend.displayName
-                }
-                friends.push(friendInfo);
-                const recipeIds = Object.keys(friend.recipes);
-                for(let rId of recipeIds){
-                    recipes.push(friend.recipes[rId]);
-                }
-            }
-
-            // Passes all info into func that will setState with the info needed
+            localData.saveUserInfo(userInfo);
+            localData.saveFriends(friends);
+            
             const formattedServerData = {
                 userInfo,
-                friends,
-                recipes
-            }
+                friends
+            };
             // Set app state to new data
-            handleNewData(formattedServerData); 
-            setLoading(false);
-        })
-        .catch(err=>{
+            return formattedServerData; 
+        
+        } catch(err){
             // If there's an error getting data from server, use localStorage
             // TODO flip flag in app state to show not in sync with server
             console.log('Problem getting user data: ', err);
-            useLocalData();
-        });    
+            return localData.loadAllData();
+        }   
     } else { 
         // If backlog is not clear
-        useLocalData();
+        return localData.loadAllData();
     }
 }
 
@@ -166,24 +168,15 @@ export const saveRecipe = (token, newRecipe, handleServerSyncStatus)=>{
         console.log('Backlog success from saveRecipe: ', success);
         handleServerSyncStatus(true); 
     }).catch(err=>{
-        console.log("Error saving recipes. result from saveRecipes: ", err);
+        console.log("Error saving recipes. result from saveRecipe: ", err);
         handleServerSyncStatus(false);
     });
 
     // ** Saves localStorage
     // ** Always saves to and uses localStorage
-    // Get current list
-    const currentRecipes = localData.loadRecipes();
-
-    // Filters out old recipe from current list,
-    // concatenates newRecipe and old list together
-    const updatedRecipes = currentRecipes ?
-        [{...newRecipe}, ...currentRecipes.filter(r=>r.id !== newRecipe.id)] :
-            // If no local list, return array with only new recipe
-            [{...newRecipe}];
-
-    // set local data to updated list
-    localData.saveRecipes(updatedRecipes);
+    // Set local data (userInfo.recipes) to updated list
+    const updatedRecipes = 
+        localData.saveRecipes([newRecipe]);
 
     // Return updated list
     return updatedRecipes;
@@ -198,65 +191,54 @@ export function deleteRecipe(token, recipeId, handleServerSyncStatus){
     saveAllBacklog(token)
     .then(success=>{ handleServerSyncStatus(true); })
     .catch(err=>{
-        console.log("Error saving recipes. result from deleteRecipes: ", err);
+        console.log("Error from data.deleteRecipe: ", err);
         handleServerSyncStatus(false);
     });
 
     // ** Local storage logic
     // ** Always updates and uses localStorage
     // Get current list
-    const currentRecipes = localData.loadRecipes();
-    // Filters out old recipe from current list
-    const updatedRecipes = currentRecipes ?
-        [...currentRecipes.filter(r=>r.id !== recipeId)] :
-            // If no local list, return empty array
-            [];
-    // set local data to updated list
-    localData.saveRecipes(updatedRecipes);
+    const updatedRecipes = 
+        localData.deleteRecipes(recipeId);
 
     // Return updated list
     return updatedRecipes;
 }
 
-export async function addFriend(username, setLoadingSpinner){
-    // TODO search for friend,
-    // TODO switch 'loading friend' spinner in app
+export async function addFriend(token, username){
     try{
-        await serverData.followByUsername(username);
+        const newFriend = await serverData.followByUsername(token, username);
+        return newFriend;
     } catch(err){
-        console.log("Couldn't find user");
+        console.log("Server err searching for friend: ", err);
     };
 }
 
-export function deleteFriend(friendId, handleNewData, handleServerSyncStatus){
+export async function deleteFriend(token, friendId, handleServerSyncStatus){
     // Add friendId to backlog after filtering for duplicates
-    const newDeleteList = backlog.deleteFriends.filter(cRId=>cRId !== friendId);
+    const newDeleteList = backlog.deleteFriends.filter(cFId=>cFId !== friendId);
     backlog.deleteFriends = [...newDeleteList, friendId]; 
-    // Saves any backlog async
-    saveAllBacklog()
-    .then(success=>{ handleServerSyncStatus(true); })
-    .catch(err=>{
+    
+    // Saves backlog
+    // Doesn't matter if it succeeds or fails, localStorage will keep app functional
+    // await for catch statement
+    try{ 
+        handleServerSyncStatus(true);
+        await saveAllBacklog(token);
+    } catch(err){ 
         console.log("Error deleting 'friend': ", err);
         handleServerSyncStatus(false);
-    });
+    }
 
-    let newData = {};
     try{
         // Removes friend from local data
         const newFriends = localData.deleteFriendsByIds([friendId]);
-        // Clears their recipes from local data
-        localData.clearRecipesFromDeletedIds([friendId]);
-        // Reloads local data
-        const newRecipes = localData.loadRecipes();
-        // Updates app data 
-        newData = {
-            friends: newFriends,
-            recipes: newRecipes
-        }
+        return newFriends;
     } catch(err) {
         console.log("Error deleting friend from local: " + err);
+        return [];
+        
     }
-    return newData;
 }
 
 // 'update' user info functions return success or fail 
@@ -271,16 +253,10 @@ export function updatePassword(token, oldPassword, newPassword){
     serverData.updatePassword(token, oldPassword, newPassword);
 }
 
-// 
-export function saveUserInfo(newInfo){
-    localData.saveUserInfo(newInfo);
-}
 
-export function loadUserInfo(newInfo){
-    return localData.loadUserInfo();
-}
+export const saveUserInfo = localData.saveUserInfo; 
+export const loadLocalUserInfo = localData.loadUserInfo;
+export const saveToken = localData.saveToken;
+export const loadToken = localData.loadToken;
+export const logoutUser = localData.logout;
 
-// Just saves empty object to clear values
-export function logoutUser(){
-    localData.saveUserInfo({});
-}

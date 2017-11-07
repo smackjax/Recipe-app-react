@@ -22,7 +22,6 @@ export default class EditingStepItem extends React.Component {
     }
 
     render(){
-        const stepIndex = this.props.stepIndex;
         const areaId = 'step-text-area' + this.props.stepIndex;
         return (
             <textarea 

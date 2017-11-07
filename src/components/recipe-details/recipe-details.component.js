@@ -2,8 +2,6 @@ import React from 'react';
 import uniqid from 'uniqid';
 
 // Components 
-import EditingHeader from './_header/editing.component';
-import NotEditingHeader from './_header/not-editing.component';
 import RecipeDetailsHeader from './_header/recipe-details-header.component';
 import Name from './name/name.component';
 import Info from './info/info.component';
@@ -88,7 +86,7 @@ class RecipePage extends React.Component{
         return (
             <div>
 
-                <RecipeDetailsHeader 
+                {<RecipeDetailsHeader 
                 editing={this.state.editing}
 
                 isNew={this.props.isNew}
@@ -99,7 +97,7 @@ class RecipePage extends React.Component{
                 canEdit={this.state.ownerId === this.props.myUserId}
                 handleEdit={this.startEditing.bind(this)}
                 handleDelete={this.deleteRecipe.bind(this)}
-                />
+                />}
 
                 <div className="container-fluid recipe-details-page">
 
@@ -126,8 +124,6 @@ class RecipePage extends React.Component{
                         ) : ''
                     }
                     
-
-
                     <Ingredients 
                     ingredients={this.state.ingredients}
                     editing={editing}

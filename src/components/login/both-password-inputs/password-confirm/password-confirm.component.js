@@ -1,5 +1,4 @@
 import React from 'react';  
-import Dropdown from '../../../_dropdown/dropdown.component';
 import  SkxInput from '../../../_input-not-blank/input-not-blank.component';
 
 export default (props)=>{

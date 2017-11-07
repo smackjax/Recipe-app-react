@@ -4,10 +4,6 @@ import './friend-details-header.style.css';
 
 export default (props)=>{
     // props.history
-    const fakeGoback = ()=>{
-        console.log('Tried to go back');
-    }
-    
     return (
         <div className="friend-details-header bg-nav-gray">
             <BackBtn 

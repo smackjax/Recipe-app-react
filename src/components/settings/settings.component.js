@@ -15,7 +15,7 @@ import "./settings.style.css";
 export default (props)=>{
     // props.logout
     // props.userId
-    // props.userName
+    // props.username
 
     const handleUsernameChange=(newUsername)=>{
         if(newUsername === false){
@@ -25,10 +25,10 @@ export default (props)=>{
         }
     }
     const handleDisplayNameChange=(newDisplayName)=>{
-        console.log('NEW DISPLAY NAME: ', newDisplayName);
+        console.log('TODO: ', newDisplayName);
     }
     const handlePasswordChange=(newPassword)=>{
-        console.log('NEW PASSWORD: ', newPassword);
+        console.log('TODO: ', newPassword);
     }
     return (
     <div>

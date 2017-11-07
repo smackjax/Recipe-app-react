@@ -1,66 +1,82 @@
-import {loadData, data } from '../../_data/data';
-
 import React from 'react';
+
+import {getAllRecipes} from '../../App-state-functions';
 
 // Page navbar
 // import RecipeNav from './nav/recipe-list-nav.component';
+import LoadingSpinner from '../_loading-spinner/loading-spinner.component';
 import RecipeNav from '../_main-nav/main-nav.component';
 import RecipeList from '../_recipe-list/recipe-list.component';
 import RecipeSearch from './recipe-search/recipe-search.component';
 import RecipeFilters from './recipe-filters/recipe-filters.component';
 import NewRecipeBtn from './new-recipe-btn/new-recipe-btn.component';
-import RecipeItem from './recipe-item/recipe-item.component';
-
 
 export default class RecipeDash extends React.Component {
-    // props.recipes
-    // props.myUserId
-    // ?props.friendId? 
+    // props.userInfo
+    // props.friends [{},{},...]
+
+
     state={
-        recipeList: [],
+        extractingRecipes: true,
+        allRecipes: [],
+        activeRecipes: [],
         activeFilters: [],
     }
 
-    // Generates list to be built based on friendId
     componentDidMount(){
-        const recipeList = 
-            this.props.username ? 
-                this.getRecipesFromUsernames([this.props.username]) :
-                    [...this.props.recipes];
-        const activeFilters = this.props.username ?
-            [] : ['personal', 'following']
-        this.setState({
-            recipeList: recipeList,
-            activeFilters
+        // Extracts all recipes from list
+        // Made async to show loading spinner
+            // in case it takes some time with a bigger list
+
+        const allUsers = [
+            this.props.userInfo,
+            ...this.props.friends
+        ];
+        const activeFilters =  ['personal', 'following']
+        getAllRecipes(allUsers)
+        .then((extractedRecipes)=>{
+            // Sets both filters on at first
+            
+            this.setState({
+                // Holds all recipes from this user and all 'friends'
+                allRecipes: extractedRecipes,
+                // Holds recipes being shown
+                activeRecipes: extractedRecipes,
+                // Active filters filtering allRecipes
+                activeFilters,
+                // Set done loading
+                extractingRecipes: false
+            });
+            
+        })
+        .catch(e=>{
+            this.setState({
+                activeFilters,
+                extractingRecipes: false
+            });
         });
     }
 
-    getRecipesFromUsernames(usernameList){
-        const idList = this.props.friends.map((friend)=>{
-            if(usernameList.includes(friend.username)){
-                return friend.id;
-            }
-        });
-        return this.getRecipesFromIds(idList);
+    // Handles loading spinner state
+    setBuildingRecipes(status){
+        this.setState({extractingRecipes: status});
     }
 
-    getRecipesFromIds(idList){
-        const recipesToDisplay = 
-            this.props.recipes.filter(recipe=>idList.includes(recipe.ownerId));
-        return recipesToDisplay;
-    }
     getRecipesFromFilters(filters){
         let newRecipes = [];
+        // Gets personal recipes
         if(filters.includes('personal')){
-            newRecipes = [...newRecipes, 
-                ...this.props.recipes.filter(r=>r.ownerId === this.props.myUserId)];
+            newRecipes = 
+                this.state.allRecipes.filter(r=>r.ownerId === this.props.userInfo.userId);
         }
+        // Gets friend recipes
         if(filters.includes('following')){
             newRecipes = [...newRecipes,
-                ...this.props.recipes.filter(r=>r.ownerId !== this.props.myUserId)];
+                ...this.state.allRecipes.filter(r=>r.ownerId !== this.props.userInfo.userId)];
         }
         return newRecipes;
     }
+
     setFilter(e){
         const isChecked = e.target.checked;
         const newFilters = isChecked ? 
@@ -69,26 +85,29 @@ export default class RecipeDash extends React.Component {
         const newRecipeList = this.getRecipesFromFilters(newFilters);
         this.setState({
             activeFilters: newFilters,
-            recipeList: newRecipeList
+            activeRecipes: newRecipeList
         });
     }
+    
+    // TODO needs work. Two recipes with similar don't go to top
     sortAllBySearch(searchString){
-        const newList = [...this.props.recipes];
+        const newList = [...this.state.allRecipes];
         newList.sort((r1, r2)=>{
             const position1 = r1.name.toLowerCase().search(searchString.toLowerCase());
             const position2 = r2.name.toLowerCase().search(searchString.toLowerCase());
             if(position1 >= 0 && position2 >=0 ){return -1}
             if(position1 < 0 && position2 >= 0 ){return 1}
             if((position1 >= 0 && position2 >= 0) || (position1 < 0 && position2 < 0)){ return 0 }
+            else{return 0}
         }); 
-
         this.setState({
-            recipeList: newList
+            activeRecipes: newList
         });
     }
     
 
     render(){
+
         return (
         <div>
             <RecipeNav />
@@ -106,9 +125,12 @@ export default class RecipeDash extends React.Component {
 
                 <hr />           
 
-                {this.state.recipeList.length > 0 ?
+                {this.state.extractingRecipes ?  // Building recipe list
+                    <LoadingSpinner />
+                : this.state.activeRecipes && this.state.activeFilters.length > 0 ?
                     <RecipeList 
-                    recipes={this.state.recipeList}
+                    recipes={this.state.activeRecipes}
+                    userId={this.props.userInfo.userId}
                     />
                  : // If no recipes in list
                 <div className="row">

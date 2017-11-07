@@ -1,9 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+
 import { createNewUser, loginExistingUser} from '../../_data/serverData';
 
-import Dropdown from '../_dropdown/dropdown.component';
-import SkxInput from '../_input-not-blank/input-not-blank.component';
 import HeaderInfo from './header-info/header-info.component';
 import UsernameInput from './username-input/username-input.component';
 import DisplayNameInput from './display-name-input/display-name-input.component';
@@ -13,16 +11,6 @@ import PasswordInputs from './both-password-inputs/both-pasword-inputs.component
 import LoginTypeBtns from './login-type-btns/login-type-btns.component';
 import Logo from '../../_resources/logo.svg';
 import './login.style.css';
-
-
-function handleNewUser(formElem){
-    
-    const {username, displayName, email, password} = formElem.target;
-    return ;
-}
-function handleExisting(form){
-
-}
 
 export default class LoginComponent extends React.Component{
     // props.saveUserInfo(newVals)
@@ -92,7 +80,7 @@ export default class LoginComponent extends React.Component{
         return (
             <div className="login-existing-user-page">
                 <div className="login-logo-wrapper">
-                    <img src={Logo} className="login-logo-img" />
+                    <img src={Logo} alt="Recipe-app logo" className="login-logo-img" />
                 </div>
 
                 <HeaderInfo

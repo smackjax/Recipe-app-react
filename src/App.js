@@ -1,19 +1,26 @@
 import React, { Component } from 'react';
-import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom';
+import {
+  BrowserRouter as Router, 
+  Route, 
+  Redirect, 
+  Switch
+} from 'react-router-dom';
 
 // Data functions
 import * as dataFuncs from './_data/data.js';
 import initialAppState from './_data/initialState.js';
 
+// App state functions
+import * as appFuncs from './App-state-functions';
 
 // Components
-import  LoginComponent from './components/login/login.component';
+import LoginComponent from './components/login/login.component';
+import RecipeSearch from './components/recipe-search/recipe-search.component';
 import RecipeDash from './components/recipe-dash/recipe-dash.component';
 import RecipePage from './components/recipe-details/recipe-details.component';
-import RecipeSwitch from './components/recipe-switch/recipe-switch.component';
 import FriendSwitch from './components/friend-switch/friend-switch.component';
-
 import SettingsPage from './components/settings/settings.component';
+
 
 import './Animations.css';
 import './App.css';
@@ -23,15 +30,23 @@ class App extends Component {
   state={...initialAppState }
 
   componentDidMount(){
-  // Load data
+  // Load data if local token
   // Async so passing in function to update state when resolved
-    // and function for flagging load spinned
+    // and function for flagging load spinner
+    
+    const JWT = dataFuncs.loadToken();
+    if(JWT){
+      this.setState({token: JWT});
 
-    dataFuncs.loadAllData(
-      this.state.token,
-      this.setAppData.bind(this),
-      this.setLoading.bind(this)
-    );
+      dataFuncs.loadAllData( JWT )
+      .then((appData)=>{
+        this.setAppData(appData);
+      })
+      .catch(error=>{
+        console.log("Problem loading in componentDidMount: ", error);
+      });
+      
+    }
   }
 
   handleServerSyncState(status){
@@ -40,42 +55,49 @@ class App extends Component {
 
   // Updates relevant state with any new data coming in
   setAppData(data){
-    // If no values passed in, won't try to update that piece of app state
-    const newVals = {};
-    if(data.recipes) newVals.recipes = data.recipes;
-    if(data.friends) newVals.friends = data.friends;
-    if(data.userInfo) newVals.userInfo = data.userInfo;
-    this.setState(newVals);
+    try{
+      // If no values passed in, won't try to update that piece of app state
+      const newVals = {};
+      if(data.friends) newVals.friends = 
+        appFuncs.allFriendRecipesToArrays(data.friends);
+      // Preserve current values not in new userInfo(like the JWT)
+      if(data.userInfo) newVals.userInfo = {
+        ...this.state.userInfo,
+        ...data.userInfo
+      };
+    this.setState({...newVals});
+    }catch(e){
+      console.log("Problem from setAppData: ", e);
+    }
   }
   // Controls 'loading' flag
   setLoading(isLoading){
     this.setState({serverDataLoading: isLoading});
   }
 
-  // Sets JWT authorization token(for sign in)
-  saveUserInfo(newVals){
-    console.log(newVals);
-    // Save new token
-    dataFuncs.saveUserInfo(newVals);
+  // Saves JWT and loads data
+  async loginUser(newVals){
+    this.setLoading(true);
+    
+    // Save new token to localStorage
+    dataFuncs.saveToken(newVals.token);
 
-    // Update app state with new userInfo
-    this.setState({userInfo: {...newVals}});
+    // Deletes token from userInfo
+    const parsedInfo = {...newVals };
+    delete parsedInfo.token;
+    dataFuncs.saveUserInfo(parsedInfo);
 
-    // Try to update app data from server with new user info token
-      // TODO
-  }
+    // Update app state with new userInfo & token
+    this.setState({
+      userInfo: {...parsedInfo},
+      token: newVals.token
+    });
 
+    const appData = 
+      await dataFuncs.loadAllData(newVals.token);
 
-
-  loginUser(newVals){
-    const handleData = this.setAppData.bind(this);
-    const setLoading = this.setLoading.bind(this);
-    this.saveUserInfo(newVals);
-
-    // Uses the 'set loading' to flip bool in main app state
-    // TODO might be better to move 'loading' switch into this function
-    console.log(newVals.token);
-    dataFuncs.loadAllData(newVals.token, handleData, setLoading);
+    this.setState({...appData});
+    this.setLoading(false);
   }
 
   // resets all data and clears local
@@ -85,55 +107,75 @@ class App extends Component {
     dataFuncs.logoutUser();
   }
 
-
-
   // **Recipe Data Handling Funcs
   saveRecipe(newRecipe){
-    const updatedRecipes = 
-      dataFuncs.saveRecipe(this.state.token, newRecipe, this.handleServerSyncState.bind(this));
-    this.setState({
-      recipes: updatedRecipes
-    });
+    const updatedUserInfo =
+      dataFuncs.saveRecipe(
+        this.state.token, 
+        newRecipe, 
+        this.handleServerSyncState.bind(this));
+    this.setState({userInfo: updatedUserInfo})
   }
+
+
   deleteRecipe(recipeId){
-    const newRecipes = dataFuncs.deleteRecipe(recipeId);
+    const newRecipes = dataFuncs.deleteRecipe(
+      this.state.token,
+      recipeId,
+      this.handleServerSyncState.bind(this));
     this.setState({recipes: newRecipes});
   }
 
   // **Friend data handling
-  addFriend(searchString){
-    const newData = dataFuncs.addFriend(searchString);
-    const updateApp = this.setAppData.bind(this);
-    updateApp(newData);
+  async addFriend(searchString){
+    const newFriendData = await dataFuncs.addFriend(
+      this.state.token, 
+      searchString
+    );
+    if(newFriendData) {
+      const newFriends = [
+        ...this.state.friends,
+        newFriendData
+      ];
+      this.setState({friends: newFriends});
+    }
   }
   deleteFriend(friendId){
-    const newData = dataFuncs.deleteFriend(friendId);
-    const updateApp = this.setAppData.bind(this);
-    updateApp(newData);
+    dataFuncs.deleteFriend(
+      this.state.token, 
+      friendId,
+      this.handleServerSyncState.bind(this)
+    )
+    .then(newFriends=>{
+      console.log("'friends' in main app after delete: ", newFriends);
+      this.setState({friends: newFriends});
+    })
+    .catch(e=>{
+      this.handleServerSyncState(false);
+      console.log("Problem deleting friend(msg in main app)");
+    });
   }
+
 
 
   render() {
-    // Preloads props
-    const PreloadedRecipeDash=(routeInfo)=>{
-      const username = routeInfo.match.params.username ?
-        routeInfo.match.params.username : false;
-      return <RecipeDash 
-        recipes={this.state.recipes} 
-        friends={this.state.friends}
-        myUserId={this.state.userInfo.userId} 
-        username={username} />
+    // Preloads props for routes
+
+    const PreloadedRecipeSearch = (routeInfo)=>{
+      return <RecipeSearch 
+            cooks={[this.state.userInfo, ...this.state.friends]}
+            myUserId={this.state.userInfo.userId}
+            match={routeInfo.match}
+            history={routeInfo.history}
+            handleSave={this.saveRecipe.bind(this)}
+            handleDelete={this.deleteRecipe.bind(this)} />
     }
 
-    const PreloadedRecipeSwitch=(routeInfo)=>{
-      const recipeId = routeInfo.match.params.id;
-      return <RecipeSwitch 
-              recipes={this.state.recipes}
-              recipeId={recipeId} 
-              
-              myUserId={this.state.userInfo.userId}
-              handleSave={this.saveRecipe.bind(this)}
-              handleDelete={this.deleteRecipe.bind(this)} />;
+    const PreloadedRecipeDash = (routeInfo)=>{
+        return <RecipeDash 
+          userInfo={this.state.userInfo}
+          friends={this.state.friends}
+        />
     }
     const PreloadedNewRecipe=()=>{
       return <RecipePage 
@@ -149,7 +191,6 @@ class App extends Component {
       return <FriendSwitch
               history={routeInfo.history}
               username={username}
-              recipes={this.state.recipes} 
               friends={this.state.friends} 
               handleSearch={this.addFriend.bind(this) } 
               handleDelete={this.deleteFriend.bind(this)} />
@@ -159,30 +200,30 @@ class App extends Component {
     const  PreloadedSettings=()=>{
       return <SettingsPage 
               logout={this.logoutUser.bind(this)}
-              username={this.state.userInfo.userName} 
+              username={this.state.userInfo.username} 
               displayName={this.state.userInfo.displayName} 
               id={this.state.userInfo.userId} />
     }
 
-     // If no JWT under userInfo (not signed in), 
-        // return the login page, but do NOT redirect to new path
-    if(!this.state.userInfo.token){ 
+     // If no state.token (not signed in), 
+        // return the login page, but do NOT redirect to new path,
+        // which means on successful sign in page will be whatever user was trying to access
+    if(!this.state.token){ 
       return <LoginComponent saveUserInfo={this.loginUser.bind(this)}/> 
     }
 
-    // If there is a JWT, carry on
+    // If there is a state.token (signed in), carry on
     return (
       <Router>
         <Switch>
-          <Redirect from="/" exact to="recipe-dash"/>
           <Route path="/recipe-dash/:username" component={PreloadedRecipeDash} />
           <Route path="/recipe-dash" component={PreloadedRecipeDash} />
-          <Route path="/recipes/:id" component={PreloadedRecipeSwitch} />
+          <Route path="/recipes/:id" component={PreloadedRecipeSearch} />
           <Route path="/new-recipe" component={PreloadedNewRecipe} />
           <Route path="/friends/:username" component={PreloadedFriendSwitch} />
           <Route path="/friends" component={PreloadedFriendSwitch} />
           <Route path="/settings" component={PreloadedSettings} />
-
+          <Redirect from="/" to="recipe-dash"/>
         </Switch>
       </Router>
     );

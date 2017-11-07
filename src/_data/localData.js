@@ -1,12 +1,14 @@
 /* 
 STORED DATA
-    recipes: [],
+    recipes: [], (TODO remove this and all references. New format is pulled from friends as needed)
     friends: [],
-    userId: '',
-    username: '',
-    displayName: '',
-    verified: true,
-    jwt: ''
+    userInfo: {
+        recipes: [{}]
+        userId: '',
+        username: '',
+        displayName: ''
+    }
+    token: ''
 */
 
 //TODO switch username,... to under user.username,...
@@ -14,13 +16,24 @@ STORED DATA
 // Paranoid about getting data string wrong
 const localStorageKey = 'cookbook'; 
 
+// Used on 'logout'
+const initialVals = {
+    recipes: [],
+    friends: [],
+    userInfo: {},
+    backlog: {},
+    token: "",
+};
+
 const storageKeys = {
-    // These key strings have to match main state props on app
-    recipes: 'recipes',
+    recipes: 'recipes',// TODO will be removed
     friends: 'friends',
     userInfo: 'userInfo',
-    backlog: 'backlog'
+    backlog: 'backlog',
+    token: 'token'
 };
+
+
 // Turns string into it's master localStorage key
 const masterKey = (keyString)=>localStorageKey + '-' + keyString; 
 
@@ -38,7 +51,7 @@ function getLocalData(saveKey){
         localData = parsedLocal;
     } 
     catch(e){
-        console.log('JSON couldn\'t parse from local');
+        console.log('JSON couldn\'t parse from local: ', e);
     }
     return localData;
 }
@@ -48,62 +61,56 @@ function setLocalData(data, saveKey){
     localStorage.setItem(masterSaveKey, saveString);
 }
 
-// Generic delete for arrays of objects lists
-function deleteByIds(idsToDelete, saveKey){
-    const currentItems = getLocalData(saveKey);
-    const newItems = currentItems.filter(
-        cItem=>!idsToDelete.includes(cItem.id)
-    );
-    setLocalData(newItems, saveKey);
-    return newItems;
-}
 
-// RECIPE FUNCTIONS
+// RECIPE FUNCTIONS (TODO only 'save' needed, and it will go to userInfo)
 export function saveRecipes(arrOfRecipeObjs){
-    const key = masterKey(storageKeys.recipes);
-    setLocalData(arrOfRecipeObjs, key);
-}
-export function loadRecipes(){
-    const key = masterKey(storageKeys.recipes);
-    return getLocalData(key);
-}
-export function deleteRecipeIds(recipeIdArray){
-    const newRecipes = 
-        deleteByIds(recipeIdArray, storageKeys.recipes);
+    const updatedRecipes = {};
+    for(let recipe of arrOfRecipeObjs){
+        updatedRecipes[recipe.id] = recipe;
+    };
+    const userInfo = loadUserInfo();
+    const newRecipes = {
+        ...userInfo.recipes,
+        ...updatedRecipes
+    };
+    const newUserInfo={
+        ...userInfo,
+        recipes: newRecipes
+    };
+    saveUserInfo(newUserInfo);
     return newRecipes;
+}
+export function deleteRecipes(arrOfRecipeObjs){
+    console.log("TODO delete recipes from local storage. Passed in: ");
 }
 
 
 // FRIEND FUNCTIONS
 export function saveFriends(arrOfFriendObjs){
-    const key = masterKey(storageKeys.friends);
-    setLocalData(arrOfFriendObjs, key);
+    setLocalData(arrOfFriendObjs, storageKeys.friends);
 }
 export function loadFriends(){
-    const key = masterKey(storageKeys.friends);
-    return getLocalData(key);
+    return getLocalData(storageKeys.friends);
 }
+
 export function deleteFriendsByIds(friendIdArray){
-    const newFriends = 
-        deleteByIds(friendIdArray, storageKeys.friends);
+    // Get current friend array
+    const currentFriends = loadFriends();
+    // Filters out friend ids being deleted
+    const newFriends = currentFriends.filter(
+        friend=>!friendIdArray.includes(friend.userId)
+    );
+    // Saves new data to local
+    saveFriends(newFriends)
     return newFriends;
 }
-export function clearRecipesFromDeletedIds(friendIds){
-    const currentRecipes = loadRecipes();
-    const filteredRecipes = currentRecipes.filter(
-        recipe=>!friendIds.includes(recipe.ownerId)
-    );
-    saveRecipes(filteredRecipes);
-};
 
 // BACKLOG FUNCTIONS
 export function saveBacklog(backlogObj){
-    const key = masterKey(storageKeys.backlog);
-    setLocalData(backlogObj, key);
+    setLocalData(backlogObj, storageKeys.backlog);
 }
 export function loadBacklog(){
-    const key = masterKey(storageKeys.backlog);
-    return getLocalData(key);
+    return getLocalData(storageKeys.backlog);
 }
 
 
@@ -117,22 +124,18 @@ export function saveAllData(appState, backlog){
     // Saves each app piece under it's own localStorage
     saveRecipes(newRecipes);
     saveFriends(newFriends);
-    setLocalData(newUserInfo, masterKey(storageKeys.userInfo));
-    setLocalData(backlog, masterKey(storageKeys.backlog));
+    setLocalData(newUserInfo, storageKeys.userInfo);
+    setLocalData(backlog, storageKeys.backlog);
 }
 export function loadAllData(){
-    const recipes = 
-        loadRecipes() || []; //FAKDATA.recipes;
-    const friends =
-        loadFriends() || []; // FAKEDATA.friends;
+    const friends = loadFriends() || [];
     const userInfo =
-        getLocalData(masterKey(storageKeys.userInfo)) || {}; // FAKEDATA.userInfo;
+        getLocalData(storageKeys.userInfo) || {};
     const backlog = 
-        getLocalData(masterKey(storageKeys.backlog)) || {}; // FAKEDATA.backlog;
+        getLocalData(storageKeys.backlog) || {};
     
     // Builds object with all values
     const newData = {
-        recipes,
         friends,
         userInfo,
         backlog
@@ -141,12 +144,25 @@ export function loadAllData(){
 }
 
 export function saveUserInfo(newInfo){
-    const key = masterKey(storageKeys.userInfo);
-    setLocalData({...newInfo}, key);
+    setLocalData({...newInfo}, storageKeys.userInfo);
 }
 
 export function loadUserInfo(){
-    const userInfo =
-        getLocalData(masterKey(storageKeys.userInfo)) || {};
-    return userInfo;     
+    return getLocalData(storageKeys.userInfo) || {};
+}
+
+export function saveToken(newToken){
+    setLocalData(newToken, storageKeys.token);
+};
+export function loadToken(){
+    return getLocalData(storageKeys.token) || "";
+}
+
+export function logout(){
+    // Resets all data to empty type
+    localStorage.clear();
+    const allKeys = Object.keys(storageKeys);
+    for(let key of allKeys){
+        setLocalData(initialVals[key], allKeys[key]);    
+    }
 }

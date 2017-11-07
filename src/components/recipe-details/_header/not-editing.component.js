@@ -1,23 +1,10 @@
 import React from 'react';
-import {Link, withRouter} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 
 import BackBtn from '../../_back-btn/back-btn.component';
 import ConfirmDeleteModal from './confirmDelete.modal';
 import "./not-editing.style.css";
 
-
-
-
-// this is the default behavior
-const getConfirmation = (message, callback) => {
-    const allowTransition = window.confirm(message)
-    callback(allowTransition)
-  }
-  
-const getConf = (message, callback)=>{
-    const allowTransition = window.confirm('this is is questiooooon?');
-    callback(allowTransition);
-}
 
 const notEditingHeader = (props)=>{
     // props.canEdit

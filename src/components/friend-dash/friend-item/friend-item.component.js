@@ -4,6 +4,7 @@ import "./friend-item.style.css";
 export default (props)=>{
     // props.friend
     const recipeCount = Object.keys(props.friend.recipes).length;
+
     return (
         <Link
         to={"/friends/"+props.friend.username}
