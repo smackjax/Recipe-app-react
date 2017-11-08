@@ -96,7 +96,14 @@ export function updatePassword(token, newPassword){
     });
 }
 
-export function checkUsernameAvailable(username){
-    return ;
+export async function checkUsernameAvailable(username){
+    const reqBody = {username};
+    return api.post('/login/check-username', reqBody);
 }
 
+export function closeAccount(token, password){
+    const reqBody = {password};
+    return api.post('/user/close-account', reqBody, { 
+        headers: {"Authorization" : "Bearer " + token}
+    });
+}

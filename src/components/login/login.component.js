@@ -65,10 +65,10 @@ export default class LoginComponent extends React.Component{
             });
         } catch(e){
             // Catches sign in problems
-            console.log('Server error: ', e);
+            console.log('Sign in error: ', e);
             this.setState({
                 attemptingLogin: false,
-                errorMsg: 'Problem logging in. Please try again later.'
+                errorMsg: 'Problem logging in. Please check your username and password.'
             });
         }
     }

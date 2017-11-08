@@ -1,5 +1,5 @@
 import React from 'react';
-import {checkUsernameAvailable as checkUsernameAvailableFromServer} from '../../../_data/serverData';
+import {checkUsernameAvailable} from '../../../_data/serverData';
 import Dropdown from '../../_dropdown/dropdown.component';
 import SkxInput from '../../_input-not-blank/input-not-blank.component';
 import CheckUsernameStatus from './check-status/check-status.component';
@@ -12,25 +12,37 @@ export default class UsernameInput extends React.Component {
         isBlank: false,
         invalid: false,
         checkingUsername: null,
-        usernameAvailable: null
+        usernameAvailable: null,
+        currentSearch: "",
     }
 
-    // Checks if username is available from server
-    checkUsernameAvailability(usernameString){
-        // TODO (maybe use settimeout to avoid server stress)
-        // Queries api, gets bool back
-        this.setState({checkingUsername: true}, 
-        ()=>{
-            checkUsernameAvailableFromServer(usernameString)
-            .then((isAvailable)=>{
-                this.setState({usernameAvailable: isAvailable}, ()=>{
-                    this.setState({checkingUsername: false});
-                });
-            })
-            .catch(err=>{
-                console.log('Error searching for username: ', err);
-            })
-        });
+    
+    // Queries api if username is taken
+    async checkUsernameAvailability(nameToCheck){
+        try{
+            await checkUsernameAvailable(nameToCheck);
+            this.setState({ usernameAvailable: true });
+        } catch (e) {
+            this.setState({ usernameAvailable: false });
+            console.log(e.message);
+        }
+        this.setState({checkingUsername: false});
+    }
+
+    // Checks if username is available from server by 
+    // setting state to a setTimeout, and clearing on new search
+    // to lessen server work
+    setSearch(nameToCheck){
+        this.setState({checkingUsername: true});
+        if(this.state.currentSearch){
+            clearTimeout(this.state.currentSearch);
+        }
+        const newSearch = this.checkUsernameAvailability.bind(this)
+        this.setState({currentSearch: 
+            setTimeout(()=>{
+                newSearch(nameToCheck)
+            }, 1000 // Set timeout of search to 1 second
+        )});
     }
 
     handleUsername(e){
@@ -39,7 +51,7 @@ export default class UsernameInput extends React.Component {
         });    
         if(e.target.isValid){
             if(this.props.newUser){
-                this.checkUsernameAvailability(e.target.value);
+                this.setSearch(e.target.value);
             }
         }
     }

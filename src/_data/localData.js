@@ -78,10 +78,22 @@ export function saveRecipes(arrOfRecipeObjs){
         recipes: newRecipes
     };
     saveUserInfo(newUserInfo);
-    return newRecipes;
+    return newUserInfo;
 }
-export function deleteRecipes(arrOfRecipeObjs){
-    console.log("TODO delete recipes from local storage. Passed in: ");
+
+export function deleteRecipes(recipeIds){
+    const userInfo = loadUserInfo();
+    // Deletes each recipe id in recipeIds from newRecipes
+    const newRecipes = {...userInfo.recipes};
+    for(let id of recipeIds){
+       delete newRecipes[id];
+    };
+    const newUserInfo={
+        ...userInfo,
+        recipes: newRecipes
+    };
+    saveUserInfo(newUserInfo);
+    return newUserInfo;
 }
 
 

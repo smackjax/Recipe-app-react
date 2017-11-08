@@ -155,7 +155,7 @@ export async function loadAllData(token){
 
 
 // RECIPE FUNCTIONS
-export const saveRecipe = (token, newRecipe, handleServerSyncStatus)=>{
+export function saveRecipe (token, newRecipe, handleServerSyncStatus){
     // Add recipe to backlog after filtering for duplicates
     const filteredSaveList = backlog.saveRecipes.filter(
         recipe=>recipe.id !== newRecipe.id
@@ -165,7 +165,6 @@ export const saveRecipe = (token, newRecipe, handleServerSyncStatus)=>{
     // Saves any backlog async
     saveAllBacklog(token)
     .then(success=>{ 
-        console.log('Backlog success from saveRecipe: ', success);
         handleServerSyncStatus(true); 
     }).catch(err=>{
         console.log("Error saving recipes. result from saveRecipe: ", err);
@@ -175,22 +174,24 @@ export const saveRecipe = (token, newRecipe, handleServerSyncStatus)=>{
     // ** Saves localStorage
     // ** Always saves to and uses localStorage
     // Set local data (userInfo.recipes) to updated list
-    const updatedRecipes = 
+    const updatedUserInfo = 
         localData.saveRecipes([newRecipe]);
 
     // Return updated list
-    return updatedRecipes;
+    return updatedUserInfo;
 }
 
 export function deleteRecipe(token, recipeId, handleServerSyncStatus){
     // Add recipeId to backlog after filtering for duplicates
-    const newDeleteList = backlog.deleteRecipes.filter(cRId=>cRId !== recipeId);
-    backlog.deleteRecipes = [...newDeleteList, recipeId]; 
+    const newDeleteList = 
+        [...backlog.deleteRecipes.filter(cRId=>cRId !== recipeId), recipeId];
+    backlog.deleteRecipes = newDeleteList; 
 
     // Saves any backlog async
     saveAllBacklog(token)
-    .then(success=>{ handleServerSyncStatus(true); })
-    .catch(err=>{
+    .then(success=>{ 
+        handleServerSyncStatus(true); 
+    }).catch(err=>{
         console.log("Error from data.deleteRecipe: ", err);
         handleServerSyncStatus(false);
     });
@@ -198,11 +199,11 @@ export function deleteRecipe(token, recipeId, handleServerSyncStatus){
     // ** Local storage logic
     // ** Always updates and uses localStorage
     // Get current list
-    const updatedRecipes = 
-        localData.deleteRecipes(recipeId);
+    const updatedUserInfo = 
+        localData.deleteRecipes(newDeleteList);
 
     // Return updated list
-    return updatedRecipes;
+    return updatedUserInfo;
 }
 
 export async function addFriend(token, username){
@@ -223,8 +224,8 @@ export async function deleteFriend(token, friendId, handleServerSyncStatus){
     // Doesn't matter if it succeeds or fails, localStorage will keep app functional
     // await for catch statement
     try{ 
-        handleServerSyncStatus(true);
         await saveAllBacklog(token);
+        handleServerSyncStatus(true);
     } catch(err){ 
         console.log("Error deleting 'friend': ", err);
         handleServerSyncStatus(false);

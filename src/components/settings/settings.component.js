@@ -1,5 +1,5 @@
 import React from 'react';
-
+import {withRouter} from 'react-router-dom';
 
 // Components
 import SettingsNav from '../_main-nav/main-nav.component';
@@ -12,10 +12,19 @@ import DeleteAccountBtn from './delete-account-btn/delete-account-btn.component'
 // Style
 import "./settings.style.css";
 
-export default (props)=>{
+export default withRouter((props)=>{
+    // props.history(from withRouter)
+
     // props.logout
-    // props.userId
     // props.username
+    // props.displayName
+    // props.token
+
+    const handleLogout =()=>{
+        console.log("Logout run");
+        props.logout();
+        props.history.push('/recipe-dash');
+    }
 
     const handleUsernameChange=(newUsername)=>{
         if(newUsername === false){
@@ -36,26 +45,34 @@ export default (props)=>{
         <div className="container-fluid settings-page">
             
             <LogoutBtn 
-            logout={props.logout}/>
-
+            logout={handleLogout}/>
+            
             <hr/>
 
             <ChangeUsername
             onSubmit={handleUsernameChange}
             placeholder={props.username}
+            token={props.token}
             name='username'
             />
             
             <ChangeDisplayName 
             placeholder={props.displayName}
+            token={props.token}
             onSubmit={handleDisplayNameChange}/>
+
             <hr />
-            <ChangePassword 
-            onSubmit={handlePasswordChange}
-            />
+            
+            <ChangePassword
+            token={props.token}
+            onSubmit={handlePasswordChange} />
+
             <hr />
-            <DeleteAccountBtn />
+
+            <DeleteAccountBtn 
+            token={props.token}
+            logout={handleLogout} />
         </div>
     </div>
     )
-}
+});

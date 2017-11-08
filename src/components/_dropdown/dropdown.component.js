@@ -16,7 +16,10 @@ export default class DropdownComponent extends React.Component{
         const newDropId = uniqid('dropdown-');
         this.setState({
             dropdownId: newDropId
+        }, ()=>{
+            this.adjustHeight(this.props.open);
         });
+    
     }
     componentWillReceiveProps(newProps){
         this.adjustHeight(newProps.open);

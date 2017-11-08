@@ -116,14 +116,12 @@ class App extends Component {
         this.handleServerSyncState.bind(this));
     this.setState({userInfo: updatedUserInfo})
   }
-
-
   deleteRecipe(recipeId){
-    const newRecipes = dataFuncs.deleteRecipe(
+    const newUserInfo = dataFuncs.deleteRecipe(
       this.state.token,
       recipeId,
       this.handleServerSyncState.bind(this));
-    this.setState({recipes: newRecipes});
+    this.setState({userInfo: newUserInfo});
   }
 
   // **Friend data handling
@@ -147,13 +145,8 @@ class App extends Component {
       this.handleServerSyncState.bind(this)
     )
     .then(newFriends=>{
-      console.log("'friends' in main app after delete: ", newFriends);
       this.setState({friends: newFriends});
     })
-    .catch(e=>{
-      this.handleServerSyncState(false);
-      console.log("Problem deleting friend(msg in main app)");
-    });
   }
 
 
@@ -202,7 +195,7 @@ class App extends Component {
               logout={this.logoutUser.bind(this)}
               username={this.state.userInfo.username} 
               displayName={this.state.userInfo.displayName} 
-              id={this.state.userInfo.userId} />
+              token={this.state.token} />
     }
 
      // If no state.token (not signed in), 
