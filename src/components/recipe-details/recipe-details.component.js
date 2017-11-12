@@ -26,6 +26,7 @@ class RecipePage extends React.Component{
             steps: string[]
         }
     */
+
     state={
         editing: true,
         id: '',
@@ -37,40 +38,49 @@ class RecipePage extends React.Component{
         steps: []
     }
     
+    // Set whether recipe is new or retrieved
     componentDidMount(){
         const recipe = this.props.recipe;
-        if(recipe){
+        if(recipe) {
             this.setState({
                 ...recipe,
                 editing: false,
-
             });
         } else {
-            // Generates new id
-            const newRecipeId = 
-                'u-' + this.props.myUserId + '&' +
-                    uniqid('r-');
-
+            const newId = uniqid('r-');
             this.setState({
-                id: newRecipeId,
+                isNew: true,
+                id: newId,
                 ownerId: this.props.myUserId
             });
-        }
-
+        } 
     }
 
     startEditing(){
         this.setState({editing: true});
     }
     stopEditing(){
-        this.setState({editing: false});
+        this.setState({
+            editing: false,        
+            isNew: false
+        });
     }
     saveRecipe(){
         this.stopEditing();
-        const newRecipe = {
-            ...this.state
+
+        // Creates new recipe from relevant state
+        // *Note destructuring was tempting, but it would have taken
+        // almost twice as much space. This was more to type, but
+        // I think it looks a lot cleaner
+        const newRecipe = { 
+            id : this.state.id,
+            ownerId: this.state.ownerId,
+            name: this.state.name,
+            ovenTemp : this.state.ovenTemp,
+            cookTime : this.state.cookTime,
+            ingredients : this.state.ingredients,
+            steps : this.state.steps
         };
-        delete newRecipe.editing; 
 
         // Redirects to recipe/(new recipe id) on save to avoid 'cancel' nav wierdness
         this.props.handleSave(newRecipe);
@@ -85,7 +95,6 @@ class RecipePage extends React.Component{
         const editing = this.state.editing;
         return (
             <div>
-
                 {<RecipeDetailsHeader 
                 editing={this.state.editing}
 

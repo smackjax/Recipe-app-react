@@ -9,16 +9,14 @@ export default (props)=>{
     // props.friends
     // props.handleDelete()
     // props.handleSearch()
-    const friendsInfo = props.friends;
-
     const handleSearch=(searchName)=>{
         props.handleSearch(searchName);
     }
 
     let selectedFriend = false;
-    if(props.username && friendsInfo.length > 0){
+    if(props.username && props.friends.length > 0){
         selectedFriend = 
-            friendsInfo.find(
+            props.friends.find(
                 friend=>friend.username === props.username
             );
     }
@@ -30,7 +28,7 @@ export default (props)=>{
                 friend={selectedFriend} /> 
     } else {
         return <FriendDash 
-                friends={friendsInfo}
+                friends={props.friends}
                 handleSearch={handleSearch}
                 />
     }

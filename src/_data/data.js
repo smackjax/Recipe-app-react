@@ -243,15 +243,35 @@ export async function deleteFriend(token, friendId, handleServerSyncStatus){
 }
 
 // 'update' user info functions return success or fail 
-export function updateUsername(token, newUsername){
-    serverData.updateUsername(token, newUsername);
+export async function updateUsername(token, password, newUsername){
+    try{
+        await serverData.updateUsername(token, password, newUsername);
+        localData.updateUsername(newUsername);
+    }  catch(err){
+        // Throw error to be caught in ui
+        throw err;
+    }
 }
-export function updateDisplayName(token, newDisplayName){
-    serverData.updateDisplayName(token, newDisplayName)
-    // TODO handle server responses to user update info
+export async function updateEmail(token, password, newEmail){
+    try{
+        await serverData.updateEmail(token, password, newEmail);
+        localData.updateEmail(newEmail);
+    }  catch(err){
+        // Throw error to be caught in ui
+        throw err;
+    }
 }
-export function updatePassword(token, oldPassword, newPassword){
-    serverData.updatePassword(token, oldPassword, newPassword);
+export async function updateDisplayName(token, password, newDisplayName){
+    try{
+        await serverData.updateDisplayName(token, password, newDisplayName);
+        localData.updateEmail(newDisplayName);
+    }  catch(err){
+        // Throw error to be caught in ui
+        throw err;
+    }
+}
+export async function updatePassword(token, currentPassword, newPassword){
+    return serverData.updatePassword(token, currentPassword, newPassword);
 }
 
 

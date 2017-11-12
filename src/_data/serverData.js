@@ -77,26 +77,43 @@ export const deleteFriendsById = (token, friendIds)=>{
 };
 
 // User info
-export function updateUsername(token, newUsername){
-    const reqBody = { newUsername };
-    api.post('/user/update-username', reqBody, { 
+export function updateUsername(token, password, newUsername){
+    const reqBody = {
+        password,
+        newUsername
+    };
+    return api.put('/user/username', reqBody, { 
         headers: {"Authorization" : "Bearer " + token}
     });
 }
-export function updateDisplayName(token, newDisplayName){
-    const reqBody = { newDisplayName };
-    api.post('/user/update-display-name', reqBody, { 
+export function updateDisplayName(token, password, newDisplayName){
+    const reqBody = {
+        password,
+        newDisplayName
+    };
+    return api.put('/user/display-name', reqBody, { 
         headers: {"Authorization" : "Bearer " + token}
     });
 }
-export function updatePassword(token, newPassword){
-    const reqBody = { newPassword };
-    api.post('/user/update-password', reqBody, { 
+export function updateEmail(token, password, newEmail){
+    const reqBody = {
+        password,
+        newEmail
+    };
+    return api.put('/user/email', reqBody, { 
+        headers: {"Authorization" : "Bearer " + token}
+    });
+}
+export function updatePassword(token, password, newPassword){
+    const reqBody = { 
+        password,
+        newPassword };
+    return api.put('/user/password', reqBody, { 
         headers: {"Authorization" : "Bearer " + token}
     });
 }
 
-export async function checkUsernameAvailable(username){
+export function checkUsernameAvailable(username){
     const reqBody = {username};
     return api.post('/login/check-username', reqBody);
 }
@@ -104,6 +121,13 @@ export async function checkUsernameAvailable(username){
 export function closeAccount(token, password){
     const reqBody = {password};
     return api.post('/user/close-account', reqBody, { 
+        headers: {"Authorization" : "Bearer " + token}
+    });
+}
+
+export function checkPasswordValid(token, password){
+    const reqBody = { password };
+    return api.post('user/check-password', reqBody, {
         headers: {"Authorization" : "Bearer " + token}
     });
 }

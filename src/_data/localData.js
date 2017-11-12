@@ -155,6 +155,8 @@ export function loadAllData(){
     return newData;
 }
 
+
+// ** USER FUNCTIONS
 export function saveUserInfo(newInfo){
     setLocalData({...newInfo}, storageKeys.userInfo);
 }
@@ -165,10 +167,37 @@ export function loadUserInfo(){
 
 export function saveToken(newToken){
     setLocalData(newToken, storageKeys.token);
-};
+}
 export function loadToken(){
     return getLocalData(storageKeys.token) || "";
 }
+
+export function updateUsername(newUsername){
+    const currentInfo = getLocalData(storageKeys.userInfo) || {};
+    const newInfo = {
+        ...currentInfo, 
+        username: newUsername
+    };
+    saveUserInfo(newInfo);
+}
+export function updateEmail(newEmail){
+    const currentInfo = getLocalData(storageKeys.userInfo) || {};
+    const newInfo = {
+        ...currentInfo, 
+        email: newEmail
+    };
+    saveUserInfo(newInfo);
+}
+export function updateDisplayName(newDisplayName){
+    const currentInfo = getLocalData(storageKeys.userInfo) || {};
+    const newInfo = {
+        ...currentInfo, 
+        displayName: newDisplayName
+    };
+    saveUserInfo(newInfo);
+}
+
+
 
 export function logout(){
     // Resets all data to empty type

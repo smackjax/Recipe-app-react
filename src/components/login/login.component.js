@@ -36,7 +36,6 @@ export default class LoginComponent extends React.Component{
         const formElem = e.target;
         // Extract relevant values
         const {username, displayName, email, password} = formElem;
-        
         // Server login/create functions return promises
         try{
             // Assigns result of appropriate server call
@@ -77,6 +76,8 @@ export default class LoginComponent extends React.Component{
 
 
     render(){
+        const inputMT = this.state.newUser ?
+            " mt-3 " : "";
         return (
             <div className="login-existing-user-page">
                 <div className="login-logo-wrapper">
@@ -98,24 +99,24 @@ export default class LoginComponent extends React.Component{
                         <UsernameInput
                         newUser={this.state.newUser}
                         name="username"
-                        className="login-input-group"/>
+                        className="login-input-group mt-2"/>
 
                         <EmailInput 
                         newUser={this.state.newUser}
                         name="email"
-                        className="login-input-group"
+                        className={"login-input-group" + inputMT}
                         />
                     
                         <DisplayNameInput 
                         newUser={this.state.newUser} 
                         name="displayName"
-                        className="login-input-group" />
+                        className={"login-input-group" + inputMT} />
     
                         <PasswordInputs 
                         newUser={this.state.newUser}
                         mainPassName="password"
                         confirmPassName="confirmPassword"
-                        className="login-input-group" />
+                        className={"login-input-group" + inputMT} />
 
                         <div className="login-form-btns-wrapper">
                             <input 
@@ -125,7 +126,7 @@ export default class LoginComponent extends React.Component{
                             
                             <input 
                             type="submit" 
-                            value="Login"
+                            value={this.state.newUser ? "Create" : "Login"}
                             className="btn bg-blue login-form-btn  login-submit-btn"/>
                         </div>
                     </div>

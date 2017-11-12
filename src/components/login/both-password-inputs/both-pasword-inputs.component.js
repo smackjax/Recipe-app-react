@@ -47,7 +47,8 @@ export default class PasswordInputGroups extends React.Component {
                 {/* error msg for main password */}
                 <Dropdown open={this.state.mainPassValid !== null && !this.state.mainPassValid }>
                     <div className="alert alert-danger">
-                        Cannot be blank. Cannot have spaces. Maximum of 20 characters.
+                        Can't be blank. No spaces. 
+                        <br />Min: 6 Max: 20
                     </div>
                 </Dropdown>
 

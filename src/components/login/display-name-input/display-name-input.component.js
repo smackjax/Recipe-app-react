@@ -1,8 +1,8 @@
 import React from 'react';
 import Dropdown from '../../_dropdown/dropdown.component';
-import SkxInput from '../../_input-not-blank/input-not-blank.component';
+import DisplayNameInput from '../../_inputs/display-name/display-name.component';
 
-export default class DisplayNameInput extends React.Component{
+export default class NewUserDisplayName extends React.Component{
     // props.newUser
     // props.name
     // props.className
@@ -19,13 +19,12 @@ export default class DisplayNameInput extends React.Component{
         return(
         <div className={this.props.className}>
             <Dropdown open={this.props.newUser}>
-                <label className="login-input-label">Display name* (What others see)</label>
-                <SkxInput
-                type="text"
+                <label className="login-input-label"><b>Display name*</b></label>
+                <DisplayNameInput
                 onChange={this.handleChange.bind(this)}
-                maxLength="20"
                 required={this.props.newUser}
                 disabled={!this.props.newUser}
+                placeholder="(C K Dexter)"
                 name={this.props.name || "loginDisplayName"}
                 className="form-control login-input"/>
             </Dropdown>

@@ -1,5 +1,5 @@
 import React from 'react';  
-import  SkxInput from '../../../_input-not-blank/input-not-blank.component';
+import  SkxInput from '../../../_regex-input/regex-input.component';
 
 export default (props)=>{
     // props.newUser
@@ -7,7 +7,7 @@ export default (props)=>{
     // props.onChange
     return(
         <div className="login-pass-group">
-            <label className="login-input-label">Confirm Password*</label>
+            <label className="login-input-label"><b>Confirm Password*</b></label>
             <SkxInput
             type="password"
             required={props.newUser}

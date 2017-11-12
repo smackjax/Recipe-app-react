@@ -17,7 +17,6 @@ import * as appFuncs from './App-state-functions';
 import LoginComponent from './components/login/login.component';
 import RecipeSearch from './components/recipe-search/recipe-search.component';
 import RecipeDash from './components/recipe-dash/recipe-dash.component';
-import RecipePage from './components/recipe-details/recipe-details.component';
 import FriendSwitch from './components/friend-switch/friend-switch.component';
 import SettingsPage from './components/settings/settings.component';
 
@@ -28,6 +27,7 @@ import './App.css';
 
 class App extends Component {
   state={...initialAppState }
+
 
   componentDidMount(){
   // Load data if local token
@@ -43,7 +43,7 @@ class App extends Component {
         this.setAppData(appData);
       })
       .catch(error=>{
-        console.log("Problem loading in componentDidMount: ", error);
+        console.log(error);
       });
       
     }
@@ -151,17 +151,49 @@ class App extends Component {
 
 
 
+  // ** Change settings functions 
+  // All are run *after child component successfully updates info
+  setAppUserInfo(prop, val){
+    this.setState({
+      userInfo : {
+        ...this.state.userInfo,
+        [prop] : val
+      }
+    })
+  }
+  updateUsername(newUsername){
+    this.setAppUserInfo('username', newUsername);
+  }
+  updateDisplayName(newDisplayName){
+    this.setAppUserInfo('displayName', newDisplayName);
+  }
+  updateEmail(newEmail){
+    this.setAppUserInfo('email', newEmail);
+  }
+  
+
+
   render() {
+    // If no state.token (not signed in), 
+    // return the login page, but do NOT redirect to new path,
+    // which means on successful sign in page will be whatever user was trying to access
+    if(!this.state.token){ 
+      return <LoginComponent saveUserInfo={this.loginUser.bind(this)}/> 
+    }
+
+
     // Preloads props for routes
 
+    // Handles searching for recipes and new recipes
+    // OR sets recipe to be new
     const PreloadedRecipeSearch = (routeInfo)=>{
       return <RecipeSearch 
-            cooks={[this.state.userInfo, ...this.state.friends]}
-            myUserId={this.state.userInfo.userId}
-            match={routeInfo.match}
-            history={routeInfo.history}
-            handleSave={this.saveRecipe.bind(this)}
-            handleDelete={this.deleteRecipe.bind(this)} />
+              cooks={[this.state.userInfo, ...this.state.friends]}
+              myUserId={this.state.userInfo.userId}
+              match={routeInfo.match}
+              history={routeInfo.history}
+              handleSave={this.saveRecipe.bind(this)}
+              handleDelete={this.deleteRecipe.bind(this)} />
     }
 
     const PreloadedRecipeDash = (routeInfo)=>{
@@ -169,13 +201,6 @@ class App extends Component {
           userInfo={this.state.userInfo}
           friends={this.state.friends}
         />
-    }
-    const PreloadedNewRecipe=()=>{
-      return <RecipePage 
-              myUserId={this.state.userInfo.userId}
-              isNew={true} 
-              handleSave={this.saveRecipe.bind(this)}
-              handleDelete={this.deleteRecipe.bind(this)}  />;
     }
 
     const PreloadedFriendSwitch=(routeInfo)=>{
@@ -189,33 +214,30 @@ class App extends Component {
               handleDelete={this.deleteFriend.bind(this)} />
     }
 
-
     const  PreloadedSettings=()=>{
       return <SettingsPage 
-              logout={this.logoutUser.bind(this)}
-              username={this.state.userInfo.username} 
-              displayName={this.state.userInfo.displayName} 
-              token={this.state.token} />
+              userInfo={this.state.userInfo}
+              token={this.state.token} 
+
+              updateUsername={this.updateUsername.bind(this)}
+              updateDisplayName={this.updateDisplayName.bind(this)}
+              updateEmail={this.updateEmail.bind(this)}
+
+              logout={this.logoutUser.bind(this)} 
+              />
     }
 
-     // If no state.token (not signed in), 
-        // return the login page, but do NOT redirect to new path,
-        // which means on successful sign in page will be whatever user was trying to access
-    if(!this.state.token){ 
-      return <LoginComponent saveUserInfo={this.loginUser.bind(this)}/> 
-    }
+    
 
     // If there is a state.token (signed in), carry on
     return (
       <Router>
         <Switch>
-          <Route path="/recipe-dash/:username" component={PreloadedRecipeDash} />
           <Route path="/recipe-dash" component={PreloadedRecipeDash} />
           <Route path="/recipes/:id" component={PreloadedRecipeSearch} />
-          <Route path="/new-recipe" component={PreloadedNewRecipe} />
           <Route path="/friends/:username" component={PreloadedFriendSwitch} />
           <Route path="/friends" component={PreloadedFriendSwitch} />
-          <Route path="/settings" component={PreloadedSettings} />
+          <Route path="/settings" render={PreloadedSettings} /> 
           <Redirect from="/" to="recipe-dash"/>
         </Switch>
       </Router>

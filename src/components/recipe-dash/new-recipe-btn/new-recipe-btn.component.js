@@ -6,7 +6,7 @@ import './new-recipe-btn.style.css';
 export default (props)=>{
     return(
         <Link
-        to='/new-recipe'
+        to='/recipes/new'
         className="new-recipe-btn">
             <i className="fa fa-plus"></i> &nbsp;&nbsp;New
         </Link>

@@ -28,6 +28,10 @@ body {
 }
 
 
+.ez-dropdown .alert{
+  margin-bottom: 5px;
+}
+
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 80px;
