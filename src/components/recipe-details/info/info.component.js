@@ -1,4 +1,7 @@
 import React from 'react';
+import RecipeTypeSelect from '../../_recipe-type-select/recipe-type-select.component';
+import OvenTemp from './oven-temp/oven-temp.component';
+import CookTime from './cook-time/cook-time.component';
 
 export default (props)=>{
     // props.ovenTemp
@@ -18,55 +21,26 @@ export default (props)=>{
     }
     return(
         <div className="row recipe-info">
+
+            { // If ovenTemp set OR are editing
+                (props.ovenTemp || props.editing) &&
+                <OvenTemp 
+                onChange={handleOvenTemp}
+                editing={props.editing}
+                ovenTemp={props.ovenTemp}
+              />
+            }
             
-            { // ovenTemp
-                props.editing ? // Is editing
-                <div className="row">
-                    <label htmlFor="ovenTempInput" 
-                    className="offset-1 col-5 col-form-label">
-                        Oven Temp: </label>
-                    <div className="col-5">
-                        <input 
-                        onChange={handleOvenTemp}
-                        type="text" 
-                        className="form-control" 
-                        id="ovenTempInput"  
-                        maxLength="3"
-                        value={props.ovenTemp}
-                        placeholder="360 deg" />
-                    </div>
-                </div>
-                : // Is not editing
-                props.ovenTemp && ( // If oven Temp is set
-                <div className="offset-1 col-10">
-                   Oven Temp: {props.ovenTemp}
-                </div>
-                ) 
-            }
             { // Cook time
-                props.editing ? // Is editing
-                <div className="row">
-                    <label htmlFor="cookTimeInput" 
-                    className="offset-1 col-5 col-form-label">
-                        Cook time: </label>
-                    <div className="col-5">
-                        <input 
-                        onChange={handleCookTime}
-                        type="text" 
-                        className="form-control" 
-                        id="ovenTempInput"  
-                        maxLength="15"
-                        value={props.cookTime}
-                        placeholder="30 min" />
-                    </div>
-                </div>
-                : // Is not editing
-                props.cookTime && ( // If cook time is set
-                <div className="offset-1 col-10">
-                   Cook Time: {props.cookTime}
-                </div>
-                )
+                (props.ovenTemp || props.editing) &&
+                <CookTime 
+                cookTime={props.cookTime}
+                editing={props.editing}
+                inChange={handleCookTime}        
+                />
             }
+
+            
         </div>
     )
 }

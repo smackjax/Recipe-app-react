@@ -8,6 +8,7 @@ import LoadingSpinner from '../_loading-spinner/loading-spinner.component';
 import RecipeNav from '../_main-nav/main-nav.component';
 import RecipeList from '../_recipe-list/recipe-list.component';
 import RecipeSearch from './recipe-search/recipe-search.component';
+import RecipeTypeSelect from '../_recipe-type-select/recipe-type-select.component';
 import RecipeFilters from './recipe-filters/recipe-filters.component';
 import NewRecipeBtn from './new-recipe-btn/new-recipe-btn.component';
 
@@ -105,6 +106,9 @@ export default class RecipeDash extends React.Component {
         });
     }
     
+    handleTypeChange(e){
+        console.log("Type: ", e.target.value);
+    }
 
     render(){
 
@@ -122,7 +126,8 @@ export default class RecipeDash extends React.Component {
                 onChange={this.setFilter.bind(this)}
                 activeFilters={this.state.activeFilters}
                 />
-
+                <RecipeTypeSelect
+                onChange={this.handleTypeChange.bind(this)} />
                 <hr />           
 
                 {this.state.extractingRecipes ?  // Building recipe list

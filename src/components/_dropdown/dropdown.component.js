@@ -13,7 +13,7 @@ export default class DropdownComponent extends React.Component{
         currentHeight: '0px'
     }
     componentDidMount(){
-        const newDropId = uniqid('dropdown-');
+        const newDropId = this.props.id || uniqid('dropdown-');
         this.setState({
             dropdownId: newDropId
         }, ()=>{

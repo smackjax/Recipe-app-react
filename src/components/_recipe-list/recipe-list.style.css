@@ -12,21 +12,50 @@
 }
 .recipe-list-item{
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    width: 100%;
+    overflow: hidden;
+    width: 98%;
     max-width: 450px;
-    margin: auto;
-    padding: 20px 20px;
-    border-width: 1px 0 0; 
+    margin: 5px auto;
+
+    border-radius: 5px;
+    border-width: 1px; 
 
     border-style: solid;
-    background-color: rgb(255,255,255);
-    font-size: 19px;
+    border-color: rgb(184, 184, 184);
+    background-color: rgb(235, 235, 235);
+    font-size: 1.1rem;
+    color: #f3f3f3;
 }
+
+
+
+
+.recipe-list-item-body{
+    display: flex; 
+    flex-direction: row;
+    justify-content: flex-start;
+    padding:20px 20px;
+    align-items: center;
+    width: 100%
+}
+
+.recipe-list-item-svg{
+    height: auto;
+    width: 20%;
+    margin-right: 20px; 
+}
+
+.recipe-list-item-footer{
+    padding: 5px;
+    font-size: .95rem;
+    color: #444;
+}
+
 .recipe-list-item:hover{
     text-decoration: none;
+    color: #333;
 }
 
 .recipe-is-mine{

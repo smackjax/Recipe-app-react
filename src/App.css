@@ -16,16 +16,6 @@ body {
 .bg-light{
   background-color: rgb(235,235,235);
 }
-.bg-blue{
-  background-color: rgb(72,116,171);
-  color: rgb(235,235,235);
-}
-.border-blue{
-  border-color: rgb(72,116,171);
-}
-.text-blue{
-  color: rgb(72,116,171);
-}
 
 
 .ez-dropdown .alert{

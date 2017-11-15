@@ -23,6 +23,8 @@ import SettingsPage from './components/settings/settings.component';
 
 import './Animations.css';
 import './App.css';
+import './colors.css';
+
 
 
 class App extends Component {
@@ -70,14 +72,10 @@ class App extends Component {
       console.log("Problem from setAppData: ", e);
     }
   }
-  // Controls 'loading' flag
-  setLoading(isLoading){
-    this.setState({serverDataLoading: isLoading});
-  }
-
+  
   // Saves JWT and loads data
   async loginUser(newVals){
-    this.setLoading(true);
+    this.setState({serverDataLoading: true});
     
     // Save new token to localStorage
     dataFuncs.saveToken(newVals.token);
@@ -85,19 +83,27 @@ class App extends Component {
     // Deletes token from userInfo
     const parsedInfo = {...newVals };
     delete parsedInfo.token;
+    // Then saves userInfo to Local
     dataFuncs.saveUserInfo(parsedInfo);
 
     // Update app state with new userInfo & token
     this.setState({
-      userInfo: {...parsedInfo},
-      token: newVals.token
+
     });
 
     const appData = 
       await dataFuncs.loadAllData(newVals.token);
 
-    this.setState({...appData});
-    this.setLoading(false);
+    // updates App with all data
+    this.setState(
+      {
+      userInfo: {...parsedInfo},
+      ...appData,
+      token: newVals.token,
+      serverDataLoading: false
+      }
+    );
+    
   }
 
   // resets all data and clears local
@@ -233,8 +239,8 @@ class App extends Component {
     return (
       <Router>
         <Switch>
-          <Route path="/recipe-dash" component={PreloadedRecipeDash} />
-          <Route path="/recipes/:id" component={PreloadedRecipeSearch} />
+          <Route path="/recipe-dash" render={PreloadedRecipeDash} />
+          <Route path="/recipes/:id" render={PreloadedRecipeSearch} />
           <Route path="/friends/:username" component={PreloadedFriendSwitch} />
           <Route path="/friends" component={PreloadedFriendSwitch} />
           <Route path="/settings" render={PreloadedSettings} /> 

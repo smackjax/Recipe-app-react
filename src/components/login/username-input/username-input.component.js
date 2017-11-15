@@ -67,8 +67,7 @@ export default class LoginUsernameInput extends React.Component {
 
     render(){
         const newUser = this.props.newUser;
-        const btnClass = !this.state.invalid && this.state.usernameAvailable ? 
-            " btn-success" : " btn-secondary"
+
         return (
             <div className={this.props.className}>
                 <label htmlFor="login-username-input" className="login-input-label">

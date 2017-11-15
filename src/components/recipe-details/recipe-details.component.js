@@ -3,8 +3,11 @@ import uniqid from 'uniqid';
 
 // Components 
 import RecipeDetailsHeader from './_header/recipe-details-header.component';
+import RecipeTypeSelect from '../_recipe-type-select/recipe-type-select.component';
+
 import Name from './name/name.component';
-import Info from './info/info.component';
+import CookTime from './cook-time/cook-time.component';
+import OvenTemp from './oven-temp/oven-temp.component';
 import Ingredients from './ingredients/ingredients.component';
 import Steps from './steps/steps.component';
 
@@ -32,6 +35,7 @@ class RecipePage extends React.Component{
         id: '',
         ownerId: '',
         name: 'New recipe',
+        recipeType: '',
         ovenTemp: '',
         cookTime: '',
         ingredients: [],
@@ -69,9 +73,8 @@ class RecipePage extends React.Component{
         this.stopEditing();
 
         // Creates new recipe from relevant state
-        // *Note destructuring was tempting, but it would have taken
-        // almost twice as much space. This was more to type, but
-        // I think it looks a lot cleaner
+        // *Note: destructuring was tempting, but was more verbose.
+        // I think this looks a lot cleaner
         const newRecipe = { 
             id : this.state.id,
             ownerId: this.state.ownerId,
@@ -79,16 +82,23 @@ class RecipePage extends React.Component{
             ovenTemp : this.state.ovenTemp,
             cookTime : this.state.cookTime,
             ingredients : this.state.ingredients,
-            steps : this.state.steps
+            steps : this.state.steps,
+            recipeType : this.state.recipeType
         };
 
-        // Redirects to recipe/(new recipe id) on save to avoid 'cancel' nav wierdness
+        // Sends new recipe to for app state/Local data/Server Data
         this.props.handleSave(newRecipe);
     }
+
     deleteRecipe(){
       this.props.handleDelete(this.state.id);
     }
 
+    handleName(e){ this.setState({ name: e.target.value }) }
+    handleRecipeType(e){ this.setState({ recipeType: e.target.value }) }
+    handleOvenTemp(e){ this.setState({ovenTemp: e.target.value}) }
+    handleCookTime(e){ this.setState({cookTime: e.target.value}) }
+    
 
     render(){
         const setState = this.setState.bind(this);
@@ -111,28 +121,42 @@ class RecipePage extends React.Component{
                 <div className="container-fluid recipe-details-page">
 
                     <hr />
+                    
                     <Name 
                     name={this.state.name}
+                    recipeType={this.state.recipeType}
                     editing={editing}
-                    setState={setState}/>
+                    onChange={this.handleName.bind(this)}/>
 
-                    {// Info div only displayed if there is info
-                        this.state.cookTime !== '' || 
-                            this.state.ovenTemp !== '' ? (
-                            <Info 
-                            ovenTemp={this.state.ovenTemp}
-                            cookTime={this.state.cookTime}
-                            editing={editing}
-                            setState={setState}/>
-                        ) : ''
+                    { editing && (
+                        <RecipeTypeSelect 
+                        placeholder="Choose recipe type"
+                        currentType={this.state.recipeType}
+                        onChange={this.handleRecipeType.bind(this)}
+                        className="mb-3"
+                        />
+                    )}
+
+                    { // Cook time
+                        (this.state.cookTime || editing) &&
+                        <CookTime 
+                        cookTime={this.state.cookTime}
+                        editing={editing}
+                        onChange={this.handleCookTime.bind(this)}        
+                        />
                     }
-                    { // Only works outside of component
-                        this.state.cookTime !== '' || 
-                        this.state.ovenTemp !== '' ? (
-                            <hr />
-                        ) : ''
+
+                    { // If ovenTemp set OR are editing
+                        (this.state.ovenTemp || editing) &&
+                        <OvenTemp 
+                        onChange={this.handleOvenTemp.bind(this)}
+                        editing={editing}
+                        ovenTemp={this.state.ovenTemp}
+                        />
                     }
-                    
+       
+                    <hr />
+
                     <Ingredients 
                     ingredients={this.state.ingredients}
                     editing={editing}
