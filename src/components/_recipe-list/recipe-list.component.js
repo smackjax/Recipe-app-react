@@ -16,7 +16,7 @@ export default (props)=>{
                 const svgSrc = circleIcons.getIconSrc(type);
                 // get color class for item body
                 const bgClass = getBgClass(type);
-
+                // adds class if this recipe was created by user
                 const ownedClass = 
                     props.userId && props.userId === recipe.ownerId ? 
                         "recipe-is-mine" : "";
@@ -27,7 +27,10 @@ export default (props)=>{
                 className={"recipe-list-item " + ownedClass } >
 
                     <div className={"recipe-list-item-body " + bgClass}>
-                        <img src={svgSrc} className="recipe-list-item-svg" />
+                        <img 
+                        alt=""
+                        src={svgSrc} 
+                        className="recipe-list-item-svg" />
                         {recipe.name}
                     </div>
 

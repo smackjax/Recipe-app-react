@@ -1,59 +1,60 @@
 import React from 'react';
 
 export default class Ingredients extends React.Component {
+    // props.invalid
     // props.setState
+    // props.onChange
     // props.editing
     // props.ingredients
 
     // Ingredient Handling
 
     state={
-        invalid: true,
-    }
-    handleChange(e){
-        const newStr = e.target.value;
-        if(newStr.trim().length > 0){ this.setState({invalid: false})}
-        else {this.setState({invalid: true})}
-    }
-    handleNewIng(e){
-        e.preventDefault();
-        const newString = e.target.newIngredient.value;
-        const newIngs = [...this.props.ingredients, newString];
-        // Sets ingredients on PARENT setState
-        this.props.setState({  ingredients: newIngs,   });
-        // Sets THIS state
-        this.setState({  invalid: true   })
-        e.target.reset();
+        ingredients: [],
     }
 
-    handleEdit(e) {
+    // Adds a new empty string to incoming ingredients list, 
+    // for initializing new ingredient
+    componentWillReceiveProps(newProps){
+        const newIngredients = [...newProps.ingredients, ""];
+        this.setState({ ingredients: newIngredients });
+    }
+
+
+    handleChange(e){
         // data attributes must be lowercase
-        const ingIndex = e.target.dataset.ingx;
+        const ingIndex = e.target.dataset["ingindex"];
         const ingString = e.target.value;
+        // Uses prop ingredients instead of 'state' 
+        // to not have to delete added 'new recipe' input
         const newIngs = [...this.props.ingredients];
         newIngs[ingIndex] = ingString;
-        this.props.setState({ingredients: newIngs});
-    }
-    handleDelete(e) {
-        const ingIndex = e.target.dataset.ingx;
-        const newIngs = [...this.props.ingredients];
-        newIngs.splice(ingIndex, 1);
-        this.props.setState({ingredients: newIngs});
+        this.props.onChange(newIngs);
     }
 
+    handleDelete(e) {
+        const ingIndex = e.target.dataset["ingindex"];
+        const newIngs = [...this.props.ingredients];
+        newIngs.splice(ingIndex, 1);
+        this.props.onChange(newIngs);
+    }
+
+
     render(){
-        const btnColor = this.state.invalid ?
-        "" : "btn-success";
+
+        const invalidStyle = this.props.invalid ?
+            {borderColor: "#d9534f"} : {};
         return(
             <div className="container-fluid">
                 <div className="row recipe-section-header">
-                    <div className="col-12">
+                    <div
+                    style={this.props.invalid ? {color: "#d9534f"}: {}}
+                    className="col-12">
                         <h5>INGREDIENTS</h5>
                     </div>
                 </div>
-                
-                
-                { // Ingredients not editing 
+                 
+                { // Ingredients while not editing 
                 !this.props.editing && 
                 <ul className="list-group">
                     { this.props.ingredients.map((ing, ingIx)=>(
@@ -69,53 +70,43 @@ export default class Ingredients extends React.Component {
                 <div className="row no-gutters mt-1 mb-1">
                 { // Ingredients while editing
                 this.props.editing && 
-                    this.props.ingredients.map((ing, ingIx)=>(
+                    this.state.ingredients.map((ing, ingIx)=>{
+                    const isLast = (ingIx === this.state.ingredients.length - 1);
+                    return (
                     <div 
                     key={'ingredient'+ingIx}
                     className="input-group col-12 mb-3">
+                        { !isLast &&(
                         <span className="input-group-btn">
                             <button 
-                                data-ingx={ingIx}
+                                data-ingindex={ingIx}
                                 onClick={this.handleDelete.bind(this)}
                                 className="btn btn-sm btn-danger">
                                     <i className="fa fa-times"></i>
                             </button>
                         </span>
+                        )}
                             
                         <input type="text"
-                        data-ingx={ingIx}
-                        onChange={this.handleEdit.bind(this)}
+                        style={invalidStyle}
+                        placeholder={isLast ? "New ingredient" : "Deleted if left blank" }
+                        data-ingindex={ingIx}
+                        onChange={this.handleChange.bind(this)}
                         className="form-control"
                         value={ing}
                         />
+                        
+                        { isLast &&(
+                        <span 
+                        className="input-group-addon">
+                            <i className="fa fa-plus"></i>
+                        </span>
+                        )}
                     </div>
-
-                ))}
+                    )
+                })
+                }
                 </div>
-                
-                { // New ingredient controls
-                (this.props.editing === true) && ( 
-                        <form 
-                        className="row"
-                        onSubmit={this.handleNewIng.bind(this)}>
-                            <div className="input-group col-12">
-                                <input 
-                                name="newIngredient"
-                                type="text" 
-                                onChange={this.handleChange.bind(this)}
-                                className="form-control" 
-                                placeholder="New ingredient"/>
-                                <span 
-                                className="input-group-btn">
-                                    <button 
-                                    disabled={this.state.invalid}
-                                    className={"btn "+btnColor}>
-                                        <i className="fa fa-plus"></i>
-                                    </button>
-                                </span>
-                            </div>
-                        </form>
-                )}
             </div>
         )
     }

@@ -4,130 +4,111 @@ import DynamicHeightTextarea from './dynamic-textarea.component';
 
 import './steps.style.css';
 
-
-export default (props)=>{
-    // *props.setState !IMPORTANT set state for the parent is passed in and used, not 'this' state
+export default class RecipeSteps extends React.Component {
+    // props.invalid
     // props.steps
     // props.editing
-
-   const handleNewStep = (e)=>{
-        e.preventDefault();
-        const newStep = e.target.newStep.value.trim();
-        if(newStep !== ''){
-            const newSteps = [...props.steps, newStep];
-            props.setState({steps: newSteps});
-        }
-        e.target.reset();
+    // props.onChange
+    state={
+        steps: []
     }
-    const handleEdit = (e)=>{
+
+    // Adds blank string value to steps for 'new' step
+    componentWillReceiveProps(newProps){
+        const newSteps = [...newProps.steps, ""];
+        this.setState({steps: newSteps});
+    }
+
+    handleEdit(e){
         const newString = e.target.value;
         const stepIndex = e.target.dataset.stepindex;
-        const newSteps = [...props.steps];
+        const newSteps = [...this.props.steps];
         newSteps[stepIndex] = newString;
         
-        // Set steps on PARENT
-        props.setState({steps: newSteps});
-    }
-    const handleMove = (stepIndex, direction)=>{       
-            const newIndex = stepIndex + direction;
-            const newSteps = [...props.steps];
-            const step = newSteps.splice(stepIndex, 1)[0];
-            newSteps.splice(newIndex, 0, step);
-            props.setState({
-                steps: newSteps
-            });
-    }
-    // Move functions have to be closures(preloaded) in order to work
-    const moveUp = (stepIndex)=>{
-        return ()=>{ handleMove(stepIndex, -1); }
-    }
-    const moveDown = (stepIndex)=>{
-        return ()=>{ handleMove(stepIndex, 1); }
+        this.props.onChange(newSteps)
     }
 
-
-    const handleDelete = (e)=>{
-        const stepIndex = e.target.value;
-        const newSteps = [...props.steps];
+    handleDelete(e){
+        const stepIndex = e.target.dataset.stepindex;
+        const newSteps = [...this.props.steps];
         newSteps.splice(stepIndex, 1);
-        props.setState({steps: newSteps});
+        this.props.onChange(newSteps);
     }
 
-
+    render(){
     return (
         <div className="container">
             <div className="row recipe-section-header">
-                <div className="col-12 mb-2">
+                <div
+                style={this.props.invalid ? {color: "#d9534f"}: {}}
+                className="col-12 mb-2">
                     <h5>COOKING STEPS</h5>
                 </div>
             </div>
             
-            { props.steps.map((step, stepIx)=>(
-                props.editing ?
+            { this.state.steps.map((step, stepIx)=>{
+                const isLast = (stepIx === this.state.steps.length -1);
+                return this.props.editing ?
                 // If editing
                 <div 
                 key={"step-edit-"+stepIx}
                 className="row mb-3">      
 
-
+                    { !isLast &&
                     <button 
-                    onClick={handleDelete}
-                    value={stepIx}
-                    className="col-2 btn btn-sm btn-outline-danger">
+                    onClick={this.handleDelete.bind(this)}
+                    data-stepindex={stepIx}
+                    className="col-2 btn btn-sm btn-outline-danger mb-1">
                         <i className="fa fa-times"></i>
-                    </button>
+                    </button>}
 
-                    <div className="offset-1 col-2 center-v">
-                        <b>{stepIx + 1}</b>
+                    <div className={"col-2 center-v " + (!isLast ? "offset-1" : "")}>
+                        <b>{isLast ? "New" : (stepIx + 1)}</b>
                     </div>
 
-                    <button 
-                    onClick={moveUp(stepIx)}
-                    disabled={stepIx === 0}
-                    className="offset-2 col-2 btn btn-secondary">
-                        <i className="fa fa-chevron-up"></i>
-                    </button>
-
-                    <button 
-                    onClick={moveDown(stepIx)}
-                    disabled={(stepIx + 1) === props.steps.length}
-                    className="offset-1 col-2 btn btn-secondary">
-                        <i className="fa fa-chevron-down"></i>
-                    </button>
-
-
                     <DynamicHeightTextarea 
-                    onChange={handleEdit}
+                    style={this.props.invalid ? {borderColor: "#d9534f"}: {}}
+                    onChange={this.handleEdit.bind(this)}
                     value={step}
                     className="col-12 form-control"
                     stepIndex={stepIx}
+                    placeholder={isLast ? "New step" : "Deleted if left blank"}
                     />
-                </div>
-                :  // Not editing
+                </div> :
+
+                // Not editing
                 <div key={"step"+stepIx} className="row recipe-step mb-2">
                     <div className="col-12">
                         <p><b>{(stepIx + 1)}.</b> {step}</p>
                     </div>
                 </div>
-            ))}
+            })}
                
-            
-            { props.editing && // New step controls
-            <form className="row form-inline" onSubmit={handleNewStep}>
-                <textarea 
-                name="newStep"
-                placeholder="New step instructions..."
-                rows="3" 
-                className="col-12 form-control"></textarea>
-    
-                <button
-                type="submit"
-                className="offset-5 col-2 btn btn-secondary btn-sm">
-                    <i className="fa fa-plus"></i>
-                </button>
-            </form>   
-            }
 
         </div>
-    )
+    )}
+    
 }
+
+
+    // Removing (move) buttons for now,
+    // there is a problem with these methods
+    // handleMove(stepIndex, direction){
+        
+    //         const newIndex = stepIndex + direction;
+    //         const newSteps = [...this.props.steps];
+
+    //         const newStepString = newSteps.splice(stepIndex, 1)[0];
+    //         newSteps.splice(newIndex, 0, newStepString);
+            
+    //         this.props.onChange(newSteps);
+    // }
+
+    // moveUp(e){
+    //     const stepIndex = parseInt(e.target.dataset.stepindex, 10);
+    //     this.handleMove(stepIndex, -1);
+    // }
+    // moveDown(e){
+    //     const stepIndex = parseInt(e.target.dataset.stepindex, 10);
+    //     this.handleMove(stepIndex, 1);
+    // }

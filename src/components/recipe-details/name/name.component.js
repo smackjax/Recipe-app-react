@@ -1,6 +1,7 @@
 import React from 'react';
 import IconBadge from '../../_icon-badge/icon-badge.component';
 export default (props)=>{
+    // props.invalid
     // props.name
     // props.recipeType
     // props.editing
@@ -12,9 +13,10 @@ export default (props)=>{
             
             <div className="offset-sm-1 col-sm-10">
                 <input 
+                placeholder={props.placeholder}
                 type='text' 
                 onChange={props.onChange} 
-                defaultValue={props.name}
+                value={props.value}
                 className="form-control"/>
             </div>
         </div> :

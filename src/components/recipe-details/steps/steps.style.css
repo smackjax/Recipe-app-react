@@ -1,3 +1,7 @@
 .center-v {
     align-self: center;
 }
+.step-text-area{
+    overflow: hidden;
+    resize: none;
+}

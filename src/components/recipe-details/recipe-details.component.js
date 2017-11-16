@@ -31,10 +31,11 @@ class RecipePage extends React.Component{
     */
 
     state={
+        errors: [],
         editing: true,
         id: '',
         ownerId: '',
-        name: 'New recipe',
+        name: "",
         recipeType: '',
         ovenTemp: '',
         cookTime: '',
@@ -60,44 +61,111 @@ class RecipePage extends React.Component{
         } 
     }
 
-    startEditing(){
-        this.setState({editing: true});
-    }
-    stopEditing(){
-        this.setState({
-            editing: false,        
-            isNew: false
-        });
-    }
-    saveRecipe(){
-        this.stopEditing();
+    startEditing(){ this.setState({editing: true}) }
+    // Sets isNew on save to change routing button
+    stopEditing(){ this.setState({ editing: false, isNew: false }) }
 
+    saveRecipe(){
         // Creates new recipe from relevant state
-        // *Note: destructuring was tempting, but was more verbose.
-        // I think this looks a lot cleaner
         const newRecipe = { 
             id : this.state.id,
             ownerId: this.state.ownerId,
             name: this.state.name,
             ovenTemp : this.state.ovenTemp,
             cookTime : this.state.cookTime,
-            ingredients : this.state.ingredients,
-            steps : this.state.steps,
+            ingredients : this.clearEmpty(this.state.ingredients),
+            steps : this.clearEmpty(this.state.steps),
             recipeType : this.state.recipeType
         };
-
-        // Sends new recipe to for app state/Local data/Server Data
-        this.props.handleSave(newRecipe);
+        // Gets any error names
+        const errorList = this.checkForErrors(newRecipe);
+        if(errorList.length > 0){
+            // If there are errors, just set state
+            this.setState({
+                errors: errorList,
+                // spreads new values(like cleared lists)
+                ...newRecipe
+            });
+        } else {
+            // If no errors, sends new recipe for app state/Local data/Server Data
+            this.stopEditing();
+            this.props.handleSave(newRecipe);
+        }
     }
 
-    deleteRecipe(){
-      this.props.handleDelete(this.state.id);
+    deleteRecipe(){ this.props.handleDelete(this.state.id) }
+
+    // UTILITY Functions
+    // clears empty strings
+    clearEmpty(arr){
+        return arr.filter(item=>{
+            return item.trim() !== "";
+        });
+    }
+    
+    checkForErrors(recipeObj){
+        // checks all required values
+        const {name, recipeType, ingredients, steps} = recipeObj;
+        
+        // The error rules
+        const nameError = (name === "");
+        const recipeTypeError = (recipeType === "");
+        const ingredientsError = (ingredients.length <= 0);
+        const stepsError = (steps.length <= 0);
+
+        // error rules with their names
+        const errorTypes =[
+            { name: "name",
+            hasError: nameError },
+            { name: "recipeType",
+            hasError: recipeTypeError },
+            { name: "ingredients",
+            hasError: ingredientsError },
+            { name: "steps",
+            hasError: stepsError },
+        ]
+
+        // Only adds error names if they have an error
+        const errors = errorTypes.filter(
+            errorType=>errorType.hasError
+        ).map(
+            errorType=>errorType.name
+        );
+        
+        return errors;
     }
 
-    handleName(e){ this.setState({ name: e.target.value }) }
-    handleRecipeType(e){ this.setState({ recipeType: e.target.value }) }
+    // Recipe details handling
+    handleName(e){ 
+        const newErrors = this.state.errors.filter(
+            errorName => errorName !== "name");
+        this.setState({
+            errors: newErrors,
+            name: e.target.value 
+        }) }
+    handleRecipeType(e){ 
+        const newErrors = this.state.errors.filter(
+            errorName => errorName !== "recipeType"
+        );
+        this.setState({
+            errors: newErrors,
+            recipeType: e.target.value }) 
+        }
     handleOvenTemp(e){ this.setState({ovenTemp: e.target.value}) }
     handleCookTime(e){ this.setState({cookTime: e.target.value}) }
+    handleIngredients(newIngList){ 
+        const newErrors = this.state.errors.filter(
+            errorName => errorName !== "ingredients");
+        this.setState({
+            errors: newErrors,
+            ingredients: newIngList}) }
+    handleSteps(newStepList){ 
+        const newErrors = this.state.errors.filter(
+            errorName => errorName !== "steps");
+        this.setState({
+            errors: newErrors,
+            steps: newStepList}) }
+    
     
 
     render(){
@@ -122,14 +190,17 @@ class RecipePage extends React.Component{
 
                     <hr />
                     
-                    <Name 
-                    name={this.state.name}
+                    <Name
+                    invalid={this.state.errors.includes('name')}
+                    placeholder="New recipe name"
+                    value={this.state.name}
                     recipeType={this.state.recipeType}
                     editing={editing}
                     onChange={this.handleName.bind(this)}/>
 
                     { editing && (
-                        <RecipeTypeSelect 
+                        <RecipeTypeSelect
+                        invalid={this.state.errors.includes("recipeType")}
                         placeholder="Choose recipe type"
                         currentType={this.state.recipeType}
                         onChange={this.handleRecipeType.bind(this)}
@@ -157,16 +228,19 @@ class RecipePage extends React.Component{
        
                     <hr />
 
-                    <Ingredients 
+                    <Ingredients
+                    invalid={this.state.errors.includes("ingredients")}
                     ingredients={this.state.ingredients}
                     editing={editing}
-                    setState={setState}/>
+                    onChange={this.handleIngredients.bind(this)}/>
 
                     <hr />
                     <Steps 
+                    invalid={this.state.errors.includes("steps")}
                     steps={this.state.steps}
                     editing={editing}
-                    setState={setState}/>
+                    setState={setState}
+                    onChange={this.handleSteps.bind(this)} />
                 </div>
             </div>
         )
