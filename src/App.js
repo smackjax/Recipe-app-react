@@ -14,6 +14,8 @@ import initialAppState from './_data/initialState.js';
 import * as appFuncs from './App-state-functions';
 
 // Components
+import LoadingSpinner from './components/_loading-spinner/loading-spinner.component';
+
 import LoginComponent from './components/login/login.component';
 import RecipeSearch from './components/recipe-search/recipe-search.component';
 import RecipeDash from './components/recipe-dash/recipe-dash.component';
@@ -30,12 +32,18 @@ import './colors.css';
 class App extends Component {
   state={...initialAppState }
 
+  constructor(props){
+    super(props);
+    // Binds functions to be used in async ways
+    this.setAppData = this.setAppData.bind(this);
+    this.handleLoadingSpinner = this.handleLoadingSpinner.bind(this);
+  }
 
   componentDidMount(){
-  // Load data if local token
-  // Async so passing in function to update state when resolved
-    // and function for flagging load spinner
+    // Makes spinner appear until all data loaded
+    this.handleLoadingSpinner(true);
     
+     // Load data if local token
     const JWT = dataFuncs.loadToken();
     if(JWT){
       this.setState({token: JWT});
@@ -45,10 +53,17 @@ class App extends Component {
         this.setAppData(appData);
       })
       .catch(error=>{
+        // If there's an error here, then there's a big problem,
+        // should have defaulted to using localStorage
+        this.handleLoadingSpinner(false);
         console.log(error);
       });
       
     }
+  }
+
+  handleLoadingSpinner(status){
+    this.setState({loadingData: status})
   }
 
   handleServerSyncState(status){
@@ -58,24 +73,29 @@ class App extends Component {
   // Updates relevant state with any new data coming in
   setAppData(data){
     try{
-      // If no values passed in, won't try to update that piece of app state
+      // If no values passed in, won't try to update that piece of state
       const newVals = {};
       if(data.friends) newVals.friends = 
         appFuncs.allFriendRecipesToArrays(data.friends);
-      // Preserve current values not in new userInfo(like the JWT)
+      // Preserve current values not in new userInfo(TODO may not be needed anymore)
       if(data.userInfo) newVals.userInfo = {
         ...this.state.userInfo,
         ...data.userInfo
       };
-    this.setState({...newVals});
+    this.setState({...newVals},
+    ()=>{
+      this.handleLoadingSpinner(false);
+    });
     }catch(e){
+      this.handleLoadingSpinner(false);
       console.log("Problem from setAppData: ", e);
     }
   }
   
   // Saves JWT and loads data
   async loginUser(newVals){
-    this.setState({serverDataLoading: true});
+    // Start spinner
+    this.handleLoadingSpinner(true);
     
     // Save new token to localStorage
     dataFuncs.saveToken(newVals.token);
@@ -85,10 +105,10 @@ class App extends Component {
     delete parsedInfo.token;
     // Then saves userInfo to Local
     dataFuncs.saveUserInfo(parsedInfo);
-
+    console.log("newVals from loginUser: ", newVals);
     // Update app state with new userInfo & token
     this.setState({
-
+      
     });
 
     const appData = 
@@ -99,10 +119,12 @@ class App extends Component {
       {
       userInfo: {...parsedInfo},
       ...appData,
-      token: newVals.token,
-      serverDataLoading: false
+      token: newVals.token
       }
-    );
+    , ()=>{
+      // Stop spinner
+      this.handleLoadingSpinner(false);
+    });
     
   }
 
@@ -186,6 +208,15 @@ class App extends Component {
     if(!this.state.token){ 
       return <LoginComponent saveUserInfo={this.loginUser.bind(this)}/> 
     }
+
+    if(this.state.loadingData){
+      return (
+        <div className="loading-page">
+          <LoadingSpinner />
+        </div>
+      )
+    }
+
 
 
     // Preloads props for routes

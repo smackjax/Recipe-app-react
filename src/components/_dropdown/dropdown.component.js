@@ -1,7 +1,7 @@
 import React from 'react';
-import uniqid from 'uniqid';
 import './dropdown.style.css';
 
+// (TODO) might be worth optimizing with shouldComponentUpdate
 export default class DropdownComponent extends React.Component{
     // props.open
     constructor(){
@@ -9,35 +9,41 @@ export default class DropdownComponent extends React.Component{
         this.adjustHeight = this.adjustHeight.bind(this);
     }
     state={
-        dropdownId: '',
         currentHeight: '0px'
     }
     componentDidMount(){
-        const newDropId = this.props.id || uniqid('dropdown-');
-        this.setState({
-            dropdownId: newDropId
-        }, ()=>{
-            this.adjustHeight(this.props.open);
-        });
-    
+         this.adjustHeight(this.props.open);
     }
+
+    // Handles prop based adjustments
     componentWillReceiveProps(newProps){
         this.adjustHeight(newProps.open);
     }
 
+    // Handles child based adjustments(TODO test this)
+    componentDidUpdate(newProps){
+
+        this.adjustHeight(newProps.open);
+    }
+
     adjustHeight(isOpen){
-        const dId = this.state.dropdownId;
-        const dropdownElem = document.getElementById(dId);
+        const dropdownElem = this.dropdownElem;
+        
         let maxOpenHeight = '0px';
+
         if(dropdownElem){
             maxOpenHeight = dropdownElem.scrollHeight + "px";
         }
+
         // If 'open' set the dropdown max height to maximum
         const newDropHeight = isOpen ? 
             maxOpenHeight :
                 '0px';
-        
-        this.setState({ currentHeight: newDropHeight }); 
+
+        // prevents an infinite loop from componentDidUpdate
+        if(newDropHeight !== this.state.currentHeight){
+            this.setState({ currentHeight: newDropHeight });    
+        }
     }
 
     render(){
@@ -46,8 +52,9 @@ export default class DropdownComponent extends React.Component{
         return (
             <div 
             className={dropClasses} 
-            style={maxHeight} 
-            id={this.state.dropdownId}>
+            style={maxHeight}
+            ref={(dropdownElem)=>{this.dropdownElem = dropdownElem}}
+            >
                 {this.props.children}
             </div>
         )

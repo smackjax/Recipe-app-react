@@ -50,6 +50,7 @@
 .recipe-list-item-footer{
     padding: 5px;
     font-size: .95rem;
+    border-color: rgb(184, 184, 184);
     color: #444;
 }
 

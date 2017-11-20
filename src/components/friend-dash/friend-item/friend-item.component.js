@@ -8,11 +8,11 @@ export default (props)=>{
     return (
         <Link
         to={"/friends/"+props.friend.username}
-        className="friend-link row" >
-            <div className="friend-photo">
+        className="friend-link row btn-friend" >
+            <div className="friend-photo text-friend border-friend">
                 <i className="fa fa-user"></i>
             </div>
-            <div className="friend-recipe-count">
+            <div className="friend-recipe-count text-friend border-friend">
                 {recipeCount}
             </div> 
             <div className="friend-display-name">

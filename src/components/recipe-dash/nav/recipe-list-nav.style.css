@@ -1,0 +1,16 @@
+.custom-nav.recipe-dash{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    max-width: 500px;
+    margin: auto;
+}   
+.recipe-z-logo-wrapper{
+    width: 20%;
+    min-width: 80px;
+}
+.recipe-dash-nav-btn{
+    max-width: 130px;
+    width: 30%;
+}

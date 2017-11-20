@@ -1,0 +1,10 @@
+.ez-pz-select-dropdown{
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-right: auto;
+    margin-left: auto;
+    width: 100%;
+    transform: translateY(100%);
+    bottom: 0;
+}

@@ -44,8 +44,9 @@ export default class Ingredients extends React.Component {
 
         const invalidStyle = this.props.invalid ?
             {borderColor: "#d9534f"} : {};
+
         return(
-            <div className="container-fluid">
+            <div className="container-fluid mt-1 mb-1">
                 <div className="row recipe-section-header">
                     <div
                     style={this.props.invalid ? {color: "#d9534f"}: {}}
@@ -54,7 +55,7 @@ export default class Ingredients extends React.Component {
                     </div>
                 </div>
                  
-                { // Ingredients while not editing 
+                { // Not editing maps props.ingredients(not state.ingredients)
                 !this.props.editing && 
                 <ul className="list-group">
                     { this.props.ingredients.map((ing, ingIx)=>(
@@ -67,10 +68,11 @@ export default class Ingredients extends React.Component {
                 </ul>
                 }
 
-                <div className="row no-gutters mt-1 mb-1">
-                { // Ingredients while editing
-                this.props.editing && 
-                    this.state.ingredients.map((ing, ingIx)=>{
+                
+                { // Editing maps state.ingredients (not props.ingredients)
+                this.props.editing &&        
+                <div className="row no-gutters">
+                    {this.state.ingredients.map((ing, ingIx)=>{
                     const isLast = (ingIx === this.state.ingredients.length - 1);
                     return (
                     <div 
@@ -79,6 +81,7 @@ export default class Ingredients extends React.Component {
                         { !isLast &&(
                         <span className="input-group-btn">
                             <button 
+                            tabIndex="-1"
                                 data-ingindex={ingIx}
                                 onClick={this.handleDelete.bind(this)}
                                 className="btn btn-sm btn-danger">
@@ -104,9 +107,11 @@ export default class Ingredients extends React.Component {
                         )}
                     </div>
                     )
-                })
-                }
+                }) }
+
                 </div>
+            }
+                
             </div>
         )
     }

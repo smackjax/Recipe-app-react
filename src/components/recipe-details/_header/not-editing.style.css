@@ -28,3 +28,13 @@
     width: 40%;
     max-width: 150px;
 }
+
+.owner-display-name{
+    border-radius: 5px;
+    margin-right: auto;
+    margin-left: 30px; 
+    padding: 5px 10px;
+}
+.owner-display-name:hover{
+    text-decoration: none;
+}

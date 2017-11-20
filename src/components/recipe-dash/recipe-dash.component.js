@@ -5,7 +5,8 @@ import {getAllRecipes} from '../../App-state-functions';
 // Page navbar
 // import RecipeNav from './nav/recipe-list-nav.component';
 import LoadingSpinner from '../_loading-spinner/loading-spinner.component';
-import RecipeNav from '../_main-nav/main-nav.component';
+// import RecipeNav from '../_main-nav/main-nav.component';
+import RecipeNav from './nav/recipe-list-nav.component';
 import RecipeList from '../_recipe-list/recipe-list.component';
 import RecipeSearch from './recipe-search/recipe-search.component';
 import RecipeTypeSelect from '../_recipe-type-select/recipe-type-select.component';
@@ -107,7 +108,7 @@ export default class RecipeDash extends React.Component {
     }
     
     handleTypeChange(e){
-        console.log("Type: ", e.target.value);
+        console.log("Type(TODO): ", e.target.value);
     }
 
     render(){
@@ -115,6 +116,7 @@ export default class RecipeDash extends React.Component {
         return (
         <div>
             <RecipeNav />
+
             <div className="container-fluid"
             style={{paddingBottom: "100px"}}
             >
@@ -127,6 +129,8 @@ export default class RecipeDash extends React.Component {
                 activeFilters={this.state.activeFilters}
                 />
                 <RecipeTypeSelect
+                placeholderTxt="All"
+                noPlaceholder
                 onChange={this.handleTypeChange.bind(this)} />
                 <hr />           
 

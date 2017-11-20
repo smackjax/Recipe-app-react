@@ -1,13 +1,31 @@
 import React from 'react';
-import BackBtn from '../../_back-btn/back-btn.component';
+import {withRouter} from 'react-router-dom';
+
+import {MainNav, BackBtn} from '../../_main-nav/_components';
+import ConfirmUnfollowModal from './unfollow-confirm-modal/unfollow-confirm-modal.component';
+import RemoveFriendBtn from './remove-friend-btn/remove-friend-btn.component';
 import './friend-details-header.style.css';
 
-export default (props)=>{
+export default withRouter((props)=>{
     // props.history
+    // props.username
+    // props.handleDelete
+
+    const handleUnfollow=()=>{
+        props.history.replace("/friends");
+        props.handleDelete();
+    }
+
     return (
-        <div className="friend-details-header bg-nav-gray">
-            <BackBtn 
-            onClick={props.history.goBack}/>
-        </div>
+        <MainNav>
+            <BackBtn />
+            <RemoveFriendBtn 
+            className="btn btn-danger remove-friend-btn mr-auto ml-5"
+            onClick={props.handleDelete}/>
+            <ConfirmUnfollowModal 
+            userName={props.username}
+            handleUnfollow={handleUnfollow}
+            />
+        </MainNav>
     )
-}
+})

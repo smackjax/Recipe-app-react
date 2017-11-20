@@ -1,0 +1,41 @@
+.recipe-type-select{
+    max-width: 300px;
+    z-index: 10001;
+}
+
+.recipe-type-select-dropdown{
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 0 0 .25rem .25rem;
+}
+
+.recipe-type-select-item{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 2px 0;
+    padding: 5px 10px;
+    max-width: 100%;
+
+    z-index: 1000;
+}
+.recipe-type-select-item:hover,
+.recipe-type-select-item.selected:hover{
+    background: #eee;
+}
+.recipe-type-select-item.selected{
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+}
+.recipe-type-select-item.selected::after{
+    vertical-align: center;
+    width: 15px;
+    height: 15x;
+    margin-left: auto; 
+    content: url('../../_resources/general/chevron-down.svg');
+}
+.recipe-type-chevron{
+    margin-left: auto;
+    color: #777;
+}

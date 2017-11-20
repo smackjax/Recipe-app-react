@@ -2,7 +2,7 @@ import React from 'react';
 import {withRouter} from 'react-router-dom';
 
 // Components
-import SettingsNav from '../_main-nav/main-nav.component';
+import SettingsNav from './nav/settings-nav.component';
 
 import LogoutBtn from './logout-btn/logout-btn.component';
 import ConfirmLogoutModal from './logout-confirm-modal/logout-confirm-modal.component';
@@ -32,6 +32,7 @@ export default withRouter((props)=>{
     return (
     <div>
         <SettingsNav />
+
         <div className="container settings-page">
             <LogoutBtn />
             <ConfirmLogoutModal 

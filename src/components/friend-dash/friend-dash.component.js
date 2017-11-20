@@ -1,5 +1,5 @@
 import React from 'react';
-import FriendsNav from '../_main-nav/main-nav.component';
+import FriendsNav from './nav/friends-nav.component';
 import FriendSearch from './friend-search/friend-search.component';
 import FriendItem from './friend-item/friend-item.component';
 
@@ -12,10 +12,14 @@ export default (props)=>{
 
     return(
         <div className="page friend-page">
-            <FriendsNav />
-            <hr />
-            <FriendSearch 
-            handleSearch={handleSearch} />
+            
+            <FriendsNav >
+                <FriendSearch 
+                handleSearch={handleSearch} />
+            </FriendsNav>
+
+            
+            
             <hr />
 
             {props.friends.map((friend, fIndx)=>(

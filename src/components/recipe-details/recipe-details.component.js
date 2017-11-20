@@ -5,6 +5,7 @@ import uniqid from 'uniqid';
 import RecipeDetailsHeader from './_header/recipe-details-header.component';
 import RecipeTypeSelect from '../_recipe-type-select/recipe-type-select.component';
 
+import Dropdown from '../_dropdown/dropdown.component';
 import Name from './name/name.component';
 import CookTime from './cook-time/cook-time.component';
 import OvenTemp from './oven-temp/oven-temp.component';
@@ -45,6 +46,10 @@ class RecipePage extends React.Component{
     
     // Set whether recipe is new or retrieved
     componentDidMount(){
+        // recipe also container userInfo obj
+            // TODO leaving userInfo blank for 
+            // now to easily check in recipe header
+
         const recipe = this.props.recipe;
         if(recipe) {
             this.setState({
@@ -56,7 +61,8 @@ class RecipePage extends React.Component{
             this.setState({
                 isNew: true,
                 id: newId,
-                ownerId: this.props.myUserId
+                ownerId: this.props.myUserId,
+                userInfo: {}
             });
         } 
     }
@@ -104,7 +110,7 @@ class RecipePage extends React.Component{
     }
     
     checkForErrors(recipeObj){
-        // checks all required values
+        // Extracts all required values
         const {name, recipeType, ingredients, steps} = recipeObj;
         
         // The error rules
@@ -142,38 +148,48 @@ class RecipePage extends React.Component{
         this.setState({
             errors: newErrors,
             name: e.target.value 
-        }) }
+        });
+    }
     handleRecipeType(e){ 
         const newErrors = this.state.errors.filter(
             errorName => errorName !== "recipeType"
         );
         this.setState({
             errors: newErrors,
-            recipeType: e.target.value }) 
-        }
+            recipeType: e.target.value 
+        });
+    }
     handleOvenTemp(e){ this.setState({ovenTemp: e.target.value}) }
     handleCookTime(e){ this.setState({cookTime: e.target.value}) }
     handleIngredients(newIngList){ 
         const newErrors = this.state.errors.filter(
-            errorName => errorName !== "ingredients");
+            errorName => errorName !== "ingredients"
+        );
         this.setState({
             errors: newErrors,
-            ingredients: newIngList}) }
+            ingredients: newIngList
+        }); 
+    }
     handleSteps(newStepList){ 
         const newErrors = this.state.errors.filter(
-            errorName => errorName !== "steps");
+            errorName => errorName !== "steps"
+        );
         this.setState({
             errors: newErrors,
-            steps: newStepList}) }
-    
-    
+            steps: newStepList 
+        }); 
+    }
 
     render(){
         const setState = this.setState.bind(this);
         const editing = this.state.editing;
+
+        const errorList = this.state.errors;
+
         return (
             <div>
                 {<RecipeDetailsHeader 
+                userInfo={this.state.userInfo}
                 editing={this.state.editing}
 
                 isNew={this.props.isNew}
@@ -185,6 +201,35 @@ class RecipePage extends React.Component{
                 handleEdit={this.startEditing.bind(this)}
                 handleDelete={this.deleteRecipe.bind(this)}
                 />}
+                
+                <Dropdown 
+                open={true} >
+                <div className="container">
+                <div className="row">
+                    {  errorList.includes('name') && (
+                        <div
+                        className="col-12 alert alert-danger"> 
+                            Name required.
+                        </div>
+                    )}
+                    { errorList.includes("recipeType") && (
+                        <div className="col-12 alert alert-danger">
+                            Recipe type required.
+                        </div>
+                    )}
+                    { errorList.includes("ingredients") &&
+                    <div className="col-12 alert alert-danger">
+                        At least one ingredient required.
+                    </div>
+                    }
+                    {errorList.includes("steps") &&
+                    <div className="col-12 alert alert-danger">
+                        At least one step is required.
+                    </div>
+                    }
+                </div>
+                </div>
+                </Dropdown>
 
                 <div className="container-fluid recipe-details-page">
 
@@ -201,7 +246,7 @@ class RecipePage extends React.Component{
                     { editing && (
                         <RecipeTypeSelect
                         invalid={this.state.errors.includes("recipeType")}
-                        placeholder="Choose recipe type"
+                        placeholderTxt="Choose recipe type"
                         currentType={this.state.recipeType}
                         onChange={this.handleRecipeType.bind(this)}
                         className="mb-3"

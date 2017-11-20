@@ -45,17 +45,32 @@ export default class RecipeSteps extends React.Component {
                     <h5>COOKING STEPS</h5>
                 </div>
             </div>
+
+            { // If not editing
+            !this.props.editing &&
+                this.props.steps.map((step, stepIx)=>(
+                // Not editing
+                <div key={"step"+stepIx} className="row recipe-step mb-2">
+                    <div className="col-12">
+                        <p><b>{(stepIx + 1)}.</b> {step}</p>
+                    </div>
+                </div>
+            ))}
+
             
-            { this.state.steps.map((step, stepIx)=>{
+            
+            { // If editing
+            this.props.editing &&
+                this.state.steps.map((step, stepIx)=>{
                 const isLast = (stepIx === this.state.steps.length -1);
-                return this.props.editing ?
-                // If editing
+                return (
                 <div 
                 key={"step-edit-"+stepIx}
                 className="row mb-3">      
 
                     { !isLast &&
-                    <button 
+                    <button
+                    tabIndex="-1"
                     onClick={this.handleDelete.bind(this)}
                     data-stepindex={stepIx}
                     className="col-2 btn btn-sm btn-outline-danger mb-1">
@@ -74,14 +89,7 @@ export default class RecipeSteps extends React.Component {
                     stepIndex={stepIx}
                     placeholder={isLast ? "New step" : "Deleted if left blank"}
                     />
-                </div> :
-
-                // Not editing
-                <div key={"step"+stepIx} className="row recipe-step mb-2">
-                    <div className="col-12">
-                        <p><b>{(stepIx + 1)}.</b> {step}</p>
-                    </div>
-                </div>
+                </div> )
             })}
                
 

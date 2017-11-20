@@ -7,6 +7,7 @@ import './recipe-details-header.style.css';
 
 // If recipe is new(props.isNew), 'cancel' redirects to '/recipe-dash'
 export default withRouter((props)=>{
+    // props.userInfo
     // props.editing
 
     // props.isNew

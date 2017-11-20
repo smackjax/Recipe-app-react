@@ -1,0 +1,27 @@
+{
+    "_id": "sandeebee-id",
+    "password": "thisIsPass",
+    "username": "sandeebee",
+    "displayName": "Sandy(Mommom)",
+    "friends": [
+        "teri-id",
+        "livvy-id"
+    ],
+    "recipes": {
+        "sandeer1": {
+            "id": "sandeer1",
+            "ownerId": "sandeebee-id",
+            "name": "Sandy's recipe 1",
+            "ovenTemp": "400deg",
+            "ingredients": [
+                "tech saviness",
+                "Perseverence"
+            ],
+            "steps": [
+                "If at first you don't succeed",
+                "...give up and shoot it."
+
+            ]
+        }
+    }
+}

@@ -1,0 +1,133 @@
+/*Contains all app specific colors
+Each new color need that matches one these is added here, 
+rather than put into the  separate component-specific css.
+*/
+
+
+/* MAIN APP (Like nav buttons)
+COLOR: #4874ab*/
+.bg-blue{
+    background-color: #4874ab;
+    color: rgb(235,235,235);
+}
+.border-blue{
+    border-color: #4874ab;
+}
+.text-blue{
+    color: #4874ab;
+}
+
+.text-light{
+    color: #fdfdfd;
+}
+
+
+/* MAIN APP (COLOR: #AD8C7A) */
+.bg-app{
+    background-color: #AD8C7A;
+}
+.text-app{
+    color: #AD8C7A;
+}
+.border-app{
+    border-color: #AD8C7A;
+}
+.btn-app{
+    color: #fdfdfd;
+    background-color: #AD8C7A;
+}
+.btn-app:hover{
+    color: #fdfdfd;
+    background-color: rgb(153, 123, 107);
+}
+
+/* FRIENDS (COLOR: #A9422A)*/
+.bg-friend{
+    background-color: #A9422A;
+}
+.text-friend{
+    color: #A9422A;
+}
+.border-friend{
+    border-color: #A9422A;
+}
+.btn-friend{
+    color: #fdfdfd;
+    background-color: #A9422A;
+}
+.btn-friend:hover{
+    color: #fff;
+    background-color: rgb(126, 56, 41);
+}
+
+
+/* UNTYPED (COLOR: #79737b)*/
+.text-untyped{
+    color: rgb(167, 144, 132);
+}
+.bg-untyped{
+    background-color: rgb(167, 144, 132);
+}
+.border-untyped{
+    border-color: rgb(167, 144, 132);
+}
+/* SNACKS (COLOR: #9C4290) */
+.text-snack{
+    color: #9C4290;
+}
+.bg-snack{
+    background-color: #9C4290;
+}
+.border-snack{
+    border-color: #9C4290;
+}
+/* BREAKFAST (COLOR: #CB9E37) */
+.text-breakfast{
+    color: #CB9E37;
+}
+.bg-breakfast{
+    background-color: #CB9E37;
+}
+.border-breakfast{
+    border-color: #CB9E37;
+}
+/* LUNCH (COLOR: #4AB868) */
+.text-lunch{
+    color: #4AB868;
+}
+.bg-lunch{
+    background-color: #4AB868;
+}
+.border-lunch{
+    border-color: #4AB868;
+}
+/* DINNER (COLOR: #5D93D7) */
+.text-dinner{
+    color: #5D93D7;
+}
+.bg-dinner{
+    background-color: #5D93D7;
+}
+.border-dinner{
+    border-color: #5D93D7;
+}
+/* DESSERT (COLOR: #D75D61) */
+.text-dessert{
+    color: #D75D61;
+}
+.bg-dessert{
+    background-color: #D75D61;
+}
+.border-dessert{
+    border-color: #D75D61;
+}
+/* DRINK (COLOR: #BC6F1F) */
+.text-drink{
+    color: #BC6F1F;
+}
+.bg-drink{
+    background-color: #BC6F1F;
+}
+.border-drink{
+    border-color: #BC6F1F;
+}

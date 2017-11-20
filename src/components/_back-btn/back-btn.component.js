@@ -6,7 +6,7 @@ export default (props)=>{
     return (
         <button
         onClick={props.onClick}
-        className="btn back-btn bg-blue" >
+        className="btn main-nav-btn back-btn btn-app" >
             <i className="fa fa-chevron-left"></i>
         </button>
     )
