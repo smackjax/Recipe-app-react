@@ -73,7 +73,6 @@ async function saveAllBacklog(token){
         if(backlog.deleteFriends.length > 0) {
             try{
                 await serverData.deleteFriendsById(token, backlog.deleteFriends);
-                console.log("After delete friend");
                 newBacklog.deleteFriends = [];
             } catch (e){
                 newBacklog.deleteFriends = [...backlog.deleteFriends];
@@ -94,6 +93,26 @@ async function saveAllBacklog(token){
     }
 }
 
+// TODO backe handleServerSyncStatus into saveBacklog, use that for backlog actions
+export async function saveBacklogManually(token, handleServerSyncStatus){
+    try{
+        // Load any backlog actions from localStorage
+        const backlogData = localData.loadBacklog() || {};
+        backlog.saveRecipes = backlogData.saveRecipes || [];
+        backlog.deleteRecipes = backlogData.deleteRecipes || [];
+        backlog.deleteFriends = backlogData.deleteFriends || [];
+
+        // Run backlog actions to update server
+        const saveResult = await saveAllBacklog(token);
+        console.log("Save result: ", saveResult);
+        // If no errors then backlog is clear
+        handleServerSyncStatus(true);
+    } catch(err) {
+        console.log( "Error from manual backlog save: ", err);
+        handleServerSyncStatus(false);
+        return localData.loadAllData();
+    }
+}
 
 
 // Loads all data
@@ -113,7 +132,7 @@ export async function loadAllData(token, handleServerSyncStatus){
         // Run backlog actions to update server
         // Awaits completion so local changes aren't overridden
         await saveAllBacklog(token);
-        // If no errors in 'success'(result of promise), then backlog is clear
+        // If no errors then backlog is clear
         handleServerSyncStatus(true);
     } catch(err) {
         console.log('Problem clearing backlog: ', err);

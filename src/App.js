@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import {withRouter} from 'react-router-dom';
 import {
-  BrowserRouter as Router, 
   Route, 
   Redirect, 
   Switch
@@ -65,6 +65,13 @@ class App extends Component {
       });
       
     }
+  }
+
+  componentWillReceiveProps(newProps){
+    const newPathName = newProps.location.pathname;
+    const currentPathName = this.props.location.pathName;
+    // Attempts to save any backlog on each route change
+      this.saveBacklog();
   }
 
   handleLoadingSpinner(status){
@@ -137,6 +144,19 @@ class App extends Component {
     this.setState({...initialAppState});
     dataFuncs.logoutUser();
   }
+
+
+  saveBacklog(){
+    console.log("Save backlog run");
+    // TODO Redesign data funcs to handleServerState on this side
+    // I don't like passing in a function to handle it.
+    // IDEA: in line with that, maybe extract these functions to a separate file
+    dataFuncs.saveBacklogManually(
+      this.state.token,
+      this.handleServerSyncState.bind(this)
+    );
+  }
+
 
   // **Recipe Data Handling Funcs
   saveRecipe(newRecipe){
@@ -276,22 +296,18 @@ class App extends Component {
         { // Display 'not synchronized' button 
         !this.state.serverSynchronized &&(
           <NotConnected />
-        )}
-        
-        <Router>
-          
-          <Switch>
-            <Route path="/recipe-dash" render={PreloadedRecipeDash} />
-            <Route path="/recipes/:id" render={PreloadedRecipeSearch} />
-            <Route path="/friends/:username" component={PreloadedFriendSwitch} />
-            <Route path="/friends" component={PreloadedFriendSwitch} />
-            <Route path="/settings" render={PreloadedSettings} /> 
-            <Redirect from="/" to="recipe-dash"/>
-          </Switch>
-        </Router>
+        )}    
+        <Switch>
+          <Route path="/recipe-dash" render={PreloadedRecipeDash} />
+          <Route path="/recipes/:id" render={PreloadedRecipeSearch} />
+          <Route path="/friends/:username" component={PreloadedFriendSwitch} />
+          <Route path="/friends" component={PreloadedFriendSwitch} />
+          <Route path="/settings" render={PreloadedSettings} /> 
+          <Redirect from="/" to="recipe-dash"/>
+        </Switch>
       </div>
     );
   }
 }
 
-export default App;
+export default withRouter(App);
