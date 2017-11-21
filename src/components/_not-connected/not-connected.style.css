@@ -1,0 +1,16 @@
+.not-connected-alert{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    opacity: .9;
+    height: 40px;
+    width: 40px;
+    background-color: #dc3545;
+    color: #fff;
+    left: 10px; bottom: 10px;
+    border-radius: 5px;
+}
+.not-connected-alert:hover{
+    opacity: 1;
+}
