@@ -16,6 +16,7 @@ import "./settings.style.css";
 
 export default withRouter((props)=>{
     // props.history(from withRouter)
+    // props.inSync
     // props.userInfo
     // props.token
 
@@ -26,7 +27,7 @@ export default withRouter((props)=>{
 
     const handleLogout =()=>{
         props.logout();
-        props.history.push('/recipe-dash');
+        props.history.replace('/recipe-dash');
     }
 
     return (
@@ -35,8 +36,10 @@ export default withRouter((props)=>{
 
         <div className="container settings-page">
             <LogoutBtn />
-            <ConfirmLogoutModal 
+            <ConfirmLogoutModal
+            inSync={props.inSync}
             logout={handleLogout}/>
+
 
             <CurrentInfo 
             userInfo={props.userInfo}
@@ -44,8 +47,10 @@ export default withRouter((props)=>{
             <hr/>
         </div>
         
-        <UpdateUserInfo  {...props} /> 
-
+        <UpdateUserInfo  
+        {...props}  
+        logout={handleLogout}
+        /> 
     </div>
     )
 });

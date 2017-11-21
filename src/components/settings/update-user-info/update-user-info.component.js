@@ -9,27 +9,8 @@ import "./update-user-info.style.css";
 export default class UpdateUserInfo extends React.Component{
     // props.token
     // (props are passed to controls)
-    state={ 
-        checkingPassword: null, 
-        passwordCheckFailed: null,
-        password: null }
-
-    async handlePasswordCheck(e){
-        e.preventDefault()
-        const pass = e.target.passwordCheck.value;
-        try{
-            await checkPasswordValid(this.props.token, pass);
-            this.setState({
-                checkingPassword: false, 
-                passwordCheckFailed: false,
-                password: pass
-            })
-        } catch (e) {
-            this.setState({
-                checkingPassword: false,
-                passwordCheckFailed: true
-            })
-        }  
+    state={
+        password: null
     }
 
     // Keeps password in sync after update
@@ -44,7 +25,8 @@ export default class UpdateUserInfo extends React.Component{
                 <div className="settings-info-controls-wrapper">
                     <CheckUserPassword 
                     name="passwordCheck"
-                    onSubmit={this.handlePasswordCheck.bind(this)}
+                    token={this.props.token}
+                    handleCorrectPassword={this.updatePassword.bind(this)}
                     />
                 </div>
             )

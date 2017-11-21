@@ -9,9 +9,6 @@
     margin: 7px auto;
     padding: 10px 10px;
     border-radius: 7px;
-
-    background-color: rgb(72,116,171);
-    color: rgb(240,240,240);
 }
 .friend-link:hover {
     text-decoration: none;
@@ -26,9 +23,7 @@
     margin-right: 15px;
     
     border-radius: 50%;
-    background-color: rgb(230,230,230);
-    border: 2px solid rgb(72,116,171);
-    color: rgb(66, 106, 156);
+    background-color: #fff;
     font-size: 25px;
 
 }
@@ -42,9 +37,8 @@
     padding: 0px 10px;
 
     border-radius: 10%;
-    background-color: rgb(235,235,235);
+    background-color: #fff;
     font-size: 17px;
-    color: rgb(72,116,171);
 }
 .friend-display-name{
     align-self: center;

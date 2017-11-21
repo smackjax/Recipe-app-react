@@ -1,4 +1,6 @@
 import React from 'react';
+import UnfollowBtn from './unfollow-btn/unfollow-btn.component';
+import UnfollowConfirmModal from './unfollow-confirm-modal/unfollow-confirm-modal.component';
 import './info-block.style.css';
 
 export default (props)=>{
@@ -21,8 +23,14 @@ export default (props)=>{
                 <div className="friend-name-block">
                     <div className="friend-name-desc">Display Name</div>
                     <div className="friend-name-value">{ props.displayName }</div>
+                    <UnfollowBtn 
+                    className="btn btn-secondary col-12 mt-2"
+                    />
                 </div>
             </div>
+            <UnfollowConfirmModal 
+            handleUnfollow={props.handleUnfollow}
+            />
         </div>
     )
 }

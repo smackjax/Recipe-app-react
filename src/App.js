@@ -14,6 +14,7 @@ import initialAppState from './_data/initialState.js';
 import * as appFuncs from './App-state-functions';
 
 // Components
+import NotConnected from './components/_not-connected/not-connected.component';
 import LoadingSpinner from './components/_loading-spinner/loading-spinner.component';
 
 import LoginComponent from './components/login/login.component';
@@ -48,15 +49,19 @@ class App extends Component {
     if(JWT){
       this.setState({token: JWT});
 
-      dataFuncs.loadAllData( JWT )
-      .then((appData)=>{
+      // If it can't clear any backlog, data will just be local storage
+      dataFuncs.loadAllData( 
+        JWT, 
+        this.handleServerSyncState.bind(this) 
+      // Takes the returned data from either local or the server. 
+      ).then((appData)=>{
         this.setAppData(appData);
       })
       .catch(error=>{
         // If there's an error here, then there's a big problem,
         // should have defaulted to using localStorage
         this.handleLoadingSpinner(false);
-        console.log(error);
+        console.log("Data didn't default to local storage. That's bad. ", error);
       });
       
     }
@@ -105,14 +110,12 @@ class App extends Component {
     delete parsedInfo.token;
     // Then saves userInfo to Local
     dataFuncs.saveUserInfo(parsedInfo);
-    console.log("newVals from loginUser: ", newVals);
-    // Update app state with new userInfo & token
-    this.setState({
-      
-    });
 
     const appData = 
-      await dataFuncs.loadAllData(newVals.token);
+      await dataFuncs.loadAllData(
+        newVals.token, 
+        this.handleServerSyncState.bind(this)
+    );
 
     // updates App with all data
     this.setState(
@@ -153,19 +156,14 @@ class App extends Component {
   }
 
   // **Friend data handling
-  async addFriend(searchString){
-    const newFriendData = await dataFuncs.addFriend(
-      this.state.token, 
-      searchString
-    );
-    if(newFriendData) {
+  async addFriend(newFriendData){
       const newFriends = [
         ...this.state.friends,
         newFriendData
       ];
       this.setState({friends: newFriends});
-    }
   }
+
   deleteFriend(friendId){
     dataFuncs.deleteFriend(
       this.state.token, 
@@ -199,14 +197,15 @@ class App extends Component {
     this.setAppUserInfo('email', newEmail);
   }
   
-
+  
 
   render() {
     // If no state.token (not signed in), 
     // return the login page, but do NOT redirect to new path,
     // which means on successful sign in page will be whatever user was trying to access
     if(!this.state.token){ 
-      return <LoginComponent saveUserInfo={this.loginUser.bind(this)}/> 
+      return <LoginComponent
+      saveUserInfo={this.loginUser.bind(this)}/> 
     }
 
     if(this.state.loadingData){
@@ -243,18 +242,23 @@ class App extends Component {
     const PreloadedFriendSwitch=(routeInfo)=>{
       const username = routeInfo.match.params.username ?
         routeInfo.match.params.username : false;
+        // Renders either friend dash or friend details,
+        // depending on whether friend username param is populated, 
+        // and exists in list
       return <FriendSwitch
               history={routeInfo.history}
               username={username}
               friends={this.state.friends} 
-              handleSearch={this.addFriend.bind(this) } 
+              token={this.state.token}
+              addFriend={this.addFriend.bind(this) } 
               handleDelete={this.deleteFriend.bind(this)} />
     }
 
     const  PreloadedSettings=()=>{
       return <SettingsPage 
               userInfo={this.state.userInfo}
-              token={this.state.token} 
+              token={this.state.token}
+              inSync={this.state.serverSynchronized}
 
               updateUsername={this.updateUsername.bind(this)}
               updateDisplayName={this.updateDisplayName.bind(this)}
@@ -268,16 +272,24 @@ class App extends Component {
 
     // If there is a state.token (signed in), carry on
     return (
-      <Router>
-        <Switch>
-          <Route path="/recipe-dash" render={PreloadedRecipeDash} />
-          <Route path="/recipes/:id" render={PreloadedRecipeSearch} />
-          <Route path="/friends/:username" component={PreloadedFriendSwitch} />
-          <Route path="/friends" component={PreloadedFriendSwitch} />
-          <Route path="/settings" render={PreloadedSettings} /> 
-          <Redirect from="/" to="recipe-dash"/>
-        </Switch>
-      </Router>
+      <div>
+        { // Display 'not synchronized' button 
+        !this.state.serverSynchronized &&(
+          <NotConnected />
+        )}
+        
+        <Router>
+          
+          <Switch>
+            <Route path="/recipe-dash" render={PreloadedRecipeDash} />
+            <Route path="/recipes/:id" render={PreloadedRecipeSearch} />
+            <Route path="/friends/:username" component={PreloadedFriendSwitch} />
+            <Route path="/friends" component={PreloadedFriendSwitch} />
+            <Route path="/settings" render={PreloadedSettings} /> 
+            <Redirect from="/" to="recipe-dash"/>
+          </Switch>
+        </Router>
+      </div>
     );
   }
 }

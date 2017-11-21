@@ -5,10 +5,13 @@ import './new-recipe-btn.style.css';
 
 export default (props)=>{
     return(
+        <div className="new-recipe-btn-wrapper">
         <Link
         to='/recipes/new'
         className="btn  btn-app new-recipe-btn">
             <i className="fa fa-plus"></i>
         </Link>
+        </div>
+        
     )
 }

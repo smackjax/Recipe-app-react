@@ -7,7 +7,7 @@ export default (props)=>{
             <button 
             data-toggle="modal" data-target="#confirmLogoutModal"
             className="btn btn-block bg-blue offset-2 col-8 mt-2 col-sm-6 offset-sm-3">
-                LOGOUT
+                LOGOUT &nbsp; <i className="fa fa-sign-out"></i> 
             </button>
         </div>
     )

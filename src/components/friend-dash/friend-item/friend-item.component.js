@@ -9,10 +9,10 @@ export default (props)=>{
         <Link
         to={"/friends/"+props.friend.username}
         className="friend-link row btn-friend" >
-            <div className="friend-photo text-friend border-friend">
+            <div className="friend-photo text-friend">
                 <i className="fa fa-user"></i>
             </div>
-            <div className="friend-recipe-count text-friend border-friend">
+            <div className="friend-recipe-count text-friend">
                 {recipeCount}
             </div> 
             <div className="friend-display-name">

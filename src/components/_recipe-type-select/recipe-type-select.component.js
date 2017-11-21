@@ -37,7 +37,7 @@ export default (props)=>{
             <Option
             placeholder={!props.noPlaceholder}
             selected
-            value={props.noPlaceholder ? "untyped" : ""}
+            value={props.noPlaceholder ? "all" : ""}
             >
                 <ColorSplotch className="bg-untyped" />
                 <span>{props.placeholderTxt || "Select a type"}</span>

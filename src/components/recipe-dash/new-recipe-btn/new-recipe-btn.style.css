@@ -1,14 +1,23 @@
+.new-recipe-btn-wrapper{
+    z-index: 10000;
+    position: fixed;
+    bottom: 10px;
+
+    display: flex;
+    justify-content: flex-end;
+    max-width: 500px;
+    margin-right: auto;
+    margin-left: auto;
+    left: 0;
+    right: 0;
+    width: 95%;
+}
 .new-recipe-btn{
-    z-index: 100000;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
     width: 50px;
     height:50px;
-
     border-radius: 5px;
     font-size: 1.6rem;
     color: rgb(235,235,235);

@@ -100,7 +100,7 @@ async function saveAllBacklog(token){
 // ** does not return any JWT, only info for user already logged in
 // Successful server response returns
 // { userInfo: {}, friendsInfo: [{},{},...]}
-export async function loadAllData(token){
+export async function loadAllData(token, handleServerSyncStatus){
     let backlogClear = true;
     // Loads unfinished/runs backlog actions
     try{
@@ -114,9 +114,11 @@ export async function loadAllData(token){
         // Awaits completion so local changes aren't overridden
         await saveAllBacklog(token);
         // If no errors in 'success'(result of promise), then backlog is clear
+        handleServerSyncStatus(true);
     } catch(err) {
         console.log('Problem clearing backlog: ', err);
         backlogClear = false;
+        handleServerSyncStatus(false);
         return localData.loadAllData();
     }
 

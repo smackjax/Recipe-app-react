@@ -2,7 +2,7 @@ export default {
     // Applies to both local and server data
     loadingData: false,
     // If backlog is clear
-    serverSynchronized: true,
+    serverSynchronized: false,
     friends: [/*{:friendInfo}*/],
     userInfo: {
       "userId" : "",

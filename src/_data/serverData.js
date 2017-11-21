@@ -40,6 +40,7 @@ export const getUserData = async (token)=>{
 }
 
 // ** Recipes
+// TODO consider changing to 'put' request
 export const saveRecipes = (token, recipeObjArray)=>{
     const reqBody = {
         newRecipes: recipeObjArray
@@ -48,7 +49,10 @@ export const saveRecipes = (token, recipeObjArray)=>{
         headers: {"Authorization" : "Bearer " + token}
     });
 };
-                                                                                                                                 
+
+
+// Not 'delete' because it uses an array.
+// TODO consider changing to 'put' request
 export const deleteRecipesById = (token, recipeIds)=>{
     const reqBody = { recipeIds };
     return api.post('/recipes/delete', reqBody, {

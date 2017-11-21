@@ -2,6 +2,8 @@ import React from 'react';
 import uniqid from 'uniqid';
 
 // Components 
+
+
 import RecipeDetailsHeader from './_header/recipe-details-header.component';
 import RecipeTypeSelect from '../_recipe-type-select/recipe-type-select.component';
 
@@ -49,7 +51,7 @@ class RecipePage extends React.Component{
         // recipe also container userInfo obj
             // TODO leaving userInfo blank for 
             // now to easily check in recipe header
-
+        window.scrollTo(0, 0);
         const recipe = this.props.recipe;
         if(recipe) {
             this.setState({
@@ -94,8 +96,15 @@ class RecipePage extends React.Component{
             });
         } else {
             // If no errors, sends new recipe for app state/Local data/Server Data
-            this.stopEditing();
             this.props.handleSave(newRecipe);
+            // Set recipe to cleaned values
+            this.setState({
+                ...newRecipe
+            },
+            ()=>{
+                // Switch to not editing & not new
+                this.stopEditing();
+            })
         }
     }
 
@@ -188,6 +197,7 @@ class RecipePage extends React.Component{
 
         return (
             <div>
+
                 {<RecipeDetailsHeader 
                 userInfo={this.state.userInfo}
                 editing={this.state.editing}

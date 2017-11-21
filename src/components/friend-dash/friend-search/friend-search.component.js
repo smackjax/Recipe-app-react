@@ -38,13 +38,13 @@ export default class FriendSearch extends React.Component{
                     name="usernameSearch"
                     type="text" 
                     className="form-control" 
-                    placeholder="Search for username"/>
+                    placeholder="Search users"/>
                     <span className="input-group-btn">
                         <button 
                         disabled={this.state.invalid}
                         type="submit"  
                         className={"btn" + btnColorClass}>
-                            <i className="fa fa-plus"></i>
+                            <i className="fa fa-search"></i>
                         </button>
                     </span>
                 </div>

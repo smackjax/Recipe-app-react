@@ -4,11 +4,11 @@ export default (props)=>{
     // props.onChange
     // activeFilters
     return (
-        <div className="friend-filter-wrapper">
+        <div className="friend-filter-wrapper mb-2">
             <label className="form-check-label friend-filter">
                 <input type="checkbox"
-                checked={props.activeFilters.includes('personal')}
-                value="personal"
+                checked={props.myRecipesSelected}
+                value="myRecipes"
                 onChange={props.onChange}
                 className="form-check-input"
                 />
@@ -16,8 +16,8 @@ export default (props)=>{
             </label>
             <label className="form-check-label friend-filter">
                 <input type="checkbox"
-                checked={props.activeFilters.includes('following')}
-                value="following"
+                checked={props.friendRecipesSelected}
+                value="friendRecipes"
                 onChange={props.onChange}
                 className="form-check-input"
                 />

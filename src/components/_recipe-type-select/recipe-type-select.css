@@ -1,6 +1,6 @@
 .recipe-type-select{
+    z-index: 100;
     max-width: 300px;
-    z-index: 10001;
 }
 
 .recipe-type-select-dropdown{
@@ -17,7 +17,6 @@
     padding: 5px 10px;
     max-width: 100%;
 
-    z-index: 1000;
 }
 .recipe-type-select-item:hover,
 .recipe-type-select-item.selected:hover{
