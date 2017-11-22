@@ -1,6 +1,7 @@
 .recipe-type-select{
     z-index: 100;
     max-width: 300px;
+    width: 95%;
 }
 
 .recipe-type-select-dropdown{

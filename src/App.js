@@ -14,6 +14,8 @@ import initialAppState from './_data/initialState.js';
 import * as appFuncs from './App-state-functions';
 
 // Components
+import MainNav from './components/nav/nav.component';
+
 import NotConnected from './components/_not-connected/not-connected.component';
 import LoadingSpinner from './components/_loading-spinner/loading-spinner.component';
 
@@ -297,6 +299,8 @@ class App extends Component {
         !this.state.serverSynchronized &&(
           <NotConnected />
         )}    
+        <MainNav />
+
         <Switch>
           <Route path="/recipe-dash" render={PreloadedRecipeDash} />
           <Route path="/recipes/:id" render={PreloadedRecipeSearch} />

@@ -67,18 +67,16 @@ export default class FriendDash extends React.Component{
         const sortedFriends = this.sortFriends(this.props.friends);
         return(
             <div className="page friend-page">
-                
-                <FriendsNav >
-                    <FriendSearch 
-                    handleSearch={this.handleSearch.bind(this)} />
-                </FriendsNav>
+                <hr />
+
+                <FriendSearch 
+                handleSearch={this.handleSearch.bind(this)} />
 
                 <AddFriendResult 
                 searchFailed={this.state.friendNotFound}
                 dismiss={this.dismissAlerts.bind(this)}
                 />
 
-                <hr />
                 <FriendCount 
                 className="mb-4"
                 count={this.props.friends.length} />

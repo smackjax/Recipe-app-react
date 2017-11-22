@@ -198,6 +198,8 @@ class RecipePage extends React.Component{
         return (
             <div>
 
+                <hr />
+
                 {<RecipeDetailsHeader 
                 userInfo={this.state.userInfo}
                 editing={this.state.editing}
@@ -206,6 +208,7 @@ class RecipePage extends React.Component{
                 handleCancel={this.stopEditing.bind(this)}                
                 handleSave={this.saveRecipe.bind(this)}
                 newRecipeId={this.state.id}
+                recipeType={this.state.recipeType}
                 
                 canEdit={this.state.ownerId === this.props.myUserId}
                 handleEdit={this.startEditing.bind(this)}
@@ -242,8 +245,6 @@ class RecipePage extends React.Component{
                 </Dropdown>
 
                 <div className="container-fluid recipe-details-page">
-
-                    <hr />
                     
                     <Name
                     invalid={this.state.errors.includes('name')}

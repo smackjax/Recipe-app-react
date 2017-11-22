@@ -24,10 +24,7 @@ export default (props)=>{
         </div> :
         // If not editing
         <div className="row recipe-header mb-3">
-            <IconBadge
-            iconType={props.recipeType} 
-            className="offset-3 col-6 col-sm-2 mb-2"/> 
-            <h4 className="col-sm-10"><b>{props.value}</b></h4>
+            <h4 className="offset-sm-1 col-sm-10"><b>{props.value}</b></h4>
 
         </div>  
         

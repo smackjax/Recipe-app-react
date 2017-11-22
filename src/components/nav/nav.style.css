@@ -1,0 +1,34 @@
+.main-nav{
+    display: flex;
+    flex-direction: row;
+    margin: 10px auto;
+    max-width: 400px;
+    justify-content: space-between;
+    align-items: center;
+    width: 95%;
+
+}
+.main-nav-item{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20%;
+    height: 40px;
+    font-size: 1.2rem;
+    border-width: 1px;
+    border-style: solid;
+    background-color: #fff;
+    border-radius: 5%;
+    box-shadow: 0px 2px 8px -3px #555;
+}
+.main-nav-item:hover{
+    text-decoration: none;
+    color: #333;
+}
+
+.main-nav-item.info{
+border-radius: 100%;
+width: 30px;
+height: 30px;
+font-size: .8rem;
+}

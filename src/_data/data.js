@@ -104,7 +104,6 @@ export async function saveBacklogManually(token, handleServerSyncStatus){
 
         // Run backlog actions to update server
         const saveResult = await saveAllBacklog(token);
-        console.log("Save result: ", saveResult);
         // If no errors then backlog is clear
         handleServerSyncStatus(true);
     } catch(err) {

@@ -17,23 +17,19 @@
     font-size: 1.2rem;
     align-items: center; 
 }
-.delete-recipe-btn{
+.not-editing-btn{
     width: 30%;
-    max-width: 100px;
-    margin-right: 3%;
-}
-
-
-.edit-recipe-btn{
-    width: 40%;
-    max-width: 150px;
 }
 
 .owner-display-name{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     border-radius: 5px;
     margin-right: auto;
     margin-left: 30px; 
     padding: 5px 10px;
+    height: 40px;
 }
 .owner-display-name:hover{
     text-decoration: none;

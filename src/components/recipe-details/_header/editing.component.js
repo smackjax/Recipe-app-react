@@ -19,7 +19,7 @@ export default (props)=>{
     const currentSave = props.isNew ? 
         handleNewSave : props.handleSave;
     return(
-        <nav className="recipe-details-header editing">
+        <div className="recipe-controls">
 
             {// If recipe is new, display link to dash instead of just cancel
             props.isNew ? 
@@ -42,6 +42,6 @@ export default (props)=>{
             </button> 
             
 
-        </nav>
+        </div>
     )
 }

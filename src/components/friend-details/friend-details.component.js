@@ -16,10 +16,7 @@ export default (props)=>{
     
     return (
         <div className="friend-details-page">
-            <FriendDetailsHeader
-            username={props.friend.username}   
-            />
-            
+            <hr />
             <FriendInfoBlock 
             username={props.friend.username}
             displayName={props.friend.displayName} 

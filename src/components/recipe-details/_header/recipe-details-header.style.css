@@ -2,3 +2,13 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+.recipe-controls{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 400px;
+    margin: 5px auto 25px; 
+    width: 95%;
+}

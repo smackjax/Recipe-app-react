@@ -60,6 +60,24 @@ COLOR: #4874ab*/
     background-color: rgb(126, 56, 41);
 }
 
+/* RECIPES (COLOR: #EF6927) */
+.bg-recipe{
+    background-color: #EF6927;
+}
+.text-recipe{
+    color: #EF6927;
+}
+.border-recipe{
+    border-color: #EF6927;
+}
+.btn-recipe{
+    color: #fdfdfd;
+    background-color: #EF6927;
+}
+.btn-recipe:hover{
+    color: #fff;
+    background-color: #bb5320;
+}
 
 /* UNTYPED (COLOR: #79737b)*/
 .text-untyped{

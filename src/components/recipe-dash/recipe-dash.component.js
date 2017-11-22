@@ -35,7 +35,7 @@ export default class RecipeDash extends React.Component {
         }
         return (
         <div style={{paddingBottom: "100px"}}>
-            <RecipeNav />
+            
 
                 <hr/>         
                 

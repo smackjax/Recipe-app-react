@@ -9,7 +9,7 @@ export default (props)=>{
     // props.username
     return (
         <div className="friend-info-block">
-            <div className="friend-profile-pic-wrapper text-blue border-blue bg-light">
+            <div className="friend-profile-pic-wrapper text-friend bg-light">
                 <i className="fa fa-user"></i>
             </div>
             <div className="friend-name-blocks-wrapper">

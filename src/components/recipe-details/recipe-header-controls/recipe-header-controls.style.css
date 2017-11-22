@@ -1,0 +1,7 @@
+.recipe-header-controls{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 95%;
+    max-width: 400px;
+}

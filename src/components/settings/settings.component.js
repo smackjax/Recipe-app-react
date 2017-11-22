@@ -32,8 +32,7 @@ export default withRouter((props)=>{
 
     return (
     <div>
-        <SettingsNav />
-
+        <hr />
         <div className="container settings-page">
             <LogoutBtn />
             <ConfirmLogoutModal
