@@ -24,7 +24,7 @@ import RecipeSearch from './components/recipe-search/recipe-search.component';
 import RecipeDash from './components/recipe-dash/recipe-dash.component';
 import FriendSwitch from './components/friend-switch/friend-switch.component';
 import SettingsPage from './components/settings/settings.component';
-
+import AboutPage from './components/about/about.component';
 
 import './Animations.css';
 import './App.css';
@@ -307,6 +307,7 @@ class App extends Component {
           <Route path="/friends/:username" component={PreloadedFriendSwitch} />
           <Route path="/friends" component={PreloadedFriendSwitch} />
           <Route path="/settings" render={PreloadedSettings} /> 
+          <Route path="/info" component={AboutPage} />
           <Redirect from="/" to="recipe-dash"/>
         </Switch>
       </div>
