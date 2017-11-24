@@ -21,13 +21,16 @@ export default class NewPassword extends React.Component{
     }
 
 
+
     handleChange(e){
+    
         const {isValid} = e.target;
         const primary = e.target.value;
         const passwordsMatch = (this.state.secondary === primary);
         const errorMsg = isValid ? "" :
             "Must be at least 6 characters";
         this.setState({
+            updateResult: null,
             errorMsg,
             passwordsMatch,
             primary,
@@ -41,6 +44,7 @@ export default class NewPassword extends React.Component{
         const errorMsg = passwordsMatch ?
            "" : "Passwords must match";
         this.setState({
+            updateResult: null,
             errorMsg,
             passwordsMatch,
             secondary
@@ -88,9 +92,10 @@ export default class NewPassword extends React.Component{
 
         return (
             <form className="row form-group" onSubmit={this.handleSubmit.bind(this)}>
-                    <label className="col-12 mt-2" htmlFor="pass-current">Change password</label>
+                    <label className="col-12 mt-2 text-center" htmlFor="pass-current">Change password</label>
                     
                     <Dropdown 
+                    className="mr-auto ml-auto"
                     open={this.state.updating}>
                         <LoadingSpinner />
                     </Dropdown>

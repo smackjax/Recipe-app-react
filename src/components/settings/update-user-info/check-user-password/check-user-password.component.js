@@ -63,8 +63,8 @@ export default class CheckUserPassword extends React.Component{
                     <LoadingSpinner />
                 </Dropdown>
 
-                <Dropdown 
-                open={!this.state.checkingPassword}>
+                { !this.state.checkingPassword && 
+                <div>
                     <form
                     className="row mt-2"
                     onSubmit={this.handlePasswordCheck.bind(this)} >
@@ -73,7 +73,8 @@ export default class CheckUserPassword extends React.Component{
                             {...rest} />
                         </div>
                     </form>
-                </Dropdown>
+                </div>
+                }
             </div>
         )
     }

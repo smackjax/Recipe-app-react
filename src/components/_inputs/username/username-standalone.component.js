@@ -56,6 +56,7 @@ export default class UsernameForm extends React.Component{
     }
 
     handleChange(e){
+
         const {isValid, isBlank} =
             e.target;
 

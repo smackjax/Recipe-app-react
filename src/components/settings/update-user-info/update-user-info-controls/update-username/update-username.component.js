@@ -12,7 +12,12 @@ export default class UpdateUsername extends React.Component{
         attempting: null,
         updateSuccess: null
     }
-
+    reset(){
+        this.setState({
+            attempting: null,
+            updateSuccess: null
+        });
+    }
     async handleSubmit(e){
         e.preventDefault()
         const newUsername = e.target.username.value;
@@ -44,6 +49,7 @@ export default class UpdateUsername extends React.Component{
         // Using this to reset everything after each submit
         const UsernameFormInput = ()=>(
             <UsernameStandalone
+            reset={this.reset.bind(this)}
             checkUsername={true}
             name="username"
             placeholder={this.props.placeholder}

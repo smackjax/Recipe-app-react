@@ -7,7 +7,7 @@ export default (props)=>{
         <Dropdown 
         open={props.open}>
             <div className="alert alert-danger">
-            Cannot be blank. "Only letters, numbers, and underscores allowed."
+            Only letters, numbers, and underscores allowed.
             </div>
         </Dropdown>
     )
