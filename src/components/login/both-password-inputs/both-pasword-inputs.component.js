@@ -9,7 +9,6 @@ export default class PasswordInputGroups extends React.Component {
     // props.confirmPassName
 
     state={
-        confirmPassElem: null,
         mainPasswordValue: "",
         confirmPasswordVal: "",
         mainPassValid: null,
@@ -26,7 +25,6 @@ export default class PasswordInputGroups extends React.Component {
     }
 
     handleMainPasswordChange(e){
-        this.state.confirmPassElem.reset();
         this.setState({
             mainPasswordValue: e.target.value,
             mainPassValid: e.target.isValid
