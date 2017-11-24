@@ -9,6 +9,7 @@ export default class PasswordInputGroups extends React.Component {
     // props.confirmPassName
 
     state={
+        confirmPassElem: null,
         mainPasswordValue: "",
         confirmPasswordVal: "",
         mainPassValid: null,
@@ -23,7 +24,9 @@ export default class PasswordInputGroups extends React.Component {
             });
         }
     }
+
     handleMainPasswordChange(e){
+        this.state.confirmPassElem.reset();
         this.setState({
             mainPasswordValue: e.target.value,
             mainPassValid: e.target.isValid
@@ -47,7 +50,7 @@ export default class PasswordInputGroups extends React.Component {
                 {/* error msg for main password */}
                 <Dropdown open={this.state.mainPassValid !== null && !this.state.mainPassValid }>
                     <div className="alert alert-danger">
-                        Can't be blank. No spaces. 
+                        No spaces allowed 
                         <br />Min: 6 Max: 20
                     </div>
                 </Dropdown>

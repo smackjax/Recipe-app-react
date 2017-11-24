@@ -8,7 +8,7 @@ export default (props)=>{
         <div className="new-recipe-btn-wrapper">
         <Link
         to='/recipes/new'
-        className="btn  btn-app new-recipe-btn">
+        className="btn btn-app new-recipe-btn bg-recipe">
             <i className="fa fa-plus"></i>
         </Link>
         </div>

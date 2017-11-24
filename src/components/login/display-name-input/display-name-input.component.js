@@ -24,14 +24,9 @@ export default class NewUserDisplayName extends React.Component{
                 onChange={this.handleChange.bind(this)}
                 required={this.props.newUser}
                 disabled={!this.props.newUser}
-                placeholder="(C K Dexter)"
+                placeholder="Ms Stewart"
                 name={this.props.name || "loginDisplayName"}
                 className="form-control login-input"/>
-            </Dropdown>
-            <Dropdown open={this.state.invalid}>
-                <div className="alert alert-danger">
-                    Cannot be blank.
-                </div>
             </Dropdown>
         </div>
         

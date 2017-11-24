@@ -16,18 +16,25 @@ export default class LoginComponent extends React.Component{
     // props.saveUserInfo(newVals)
     
     state={
+        formElem: null,
         newUser: false,
         attemptingLogin: false,
-
         errorMsg: ""
     }
 
     // Switches between new and existing user logins
     switchUserLogin(){
+        this.state.formElem.reset();
         const isNewUser = !this.state.newUser;
         this.setState({newUser: isNewUser});
     }
 
+    setFormElem(formElem){
+        if(!this.state.formElem){
+            this.setState({formElem})
+        }
+        
+    }
     async handleSubmit(e){
         // Handles both new and existing user sign in
         e.preventDefault();
@@ -72,9 +79,6 @@ export default class LoginComponent extends React.Component{
         }
     }
 
-    // TODO remove 'setReady' and rely on server for errors
-
-
     render(){
         const inputMT = this.state.newUser ?
             " mt-3 " : "";
@@ -92,7 +96,9 @@ export default class LoginComponent extends React.Component{
                 loginFail={this.state.loginFail}
                 />
                 
-                <form onSubmit={this.handleSubmit.bind(this)} 
+                <form
+                ref={this.setFormElem.bind(this)}
+                onSubmit={this.handleSubmit.bind(this)} 
                 autoComplete="off">
                     <div className="login-form-content-wrapper">
 

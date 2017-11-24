@@ -25,12 +25,12 @@ export default (props)=>{
             props.isNew ? 
                 <Link 
                 to="/recipe-dash"
-                className="btn cancel-recipe-btn">
+                className="btn btn-danger cancel-recipe-btn">
                     <i className="fa fa-times"></i> Cancel
                 </Link> :
                 <button 
                 onClick={props.handleCancel}
-                className="btn cancel-recipe-btn ">
+                className="btn btn-danger cancel-recipe-btn ">
                     <i className="fa fa-times"></i> Cancel
                 </button>
             }

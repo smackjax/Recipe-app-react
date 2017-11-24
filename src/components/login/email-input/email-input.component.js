@@ -25,15 +25,10 @@ export default class LoginEmailInput extends React.Component{
                     onChange={this.handleChange.bind(this)}
                     required={this.props.newUser}
                     disabled={!this.props.newUser}
-                    placeholder="aStory@philadelphia"
+                    placeholder="martha@cooks.com"
                     name={this.props.name || "loginEmailInput"}
+                    maxLength="100"
                     className="form-control login-input"/>
-
-                </Dropdown>
-                <Dropdown open={this.state.invalid}>
-                    <div className="alert alert-danger">
-                        Cannot be blank.
-                    </div>
                 </Dropdown>
             </div>
         )

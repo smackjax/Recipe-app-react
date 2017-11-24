@@ -30,7 +30,7 @@ const notEditingHeader = (props)=>{
             {props.canEdit && (
                 <button 
                 data-toggle="modal" data-target="#deleteModal"
-                className="btn btn-outline-danger not-editing-btn">
+                className="btn btn-danger not-editing-btn">
                     <i className="fa fa-trash"></i>
                 </button>    
             )}
@@ -38,7 +38,7 @@ const notEditingHeader = (props)=>{
             {props.canEdit && (
                 <button
                 onClick={props.handleEdit}
-                className="btn btn-outline-info not-editing-btn">
+                className="btn btn-info not-editing-btn">
                     <i className="fa fa-pencil"></i>
                 </button>
             )}

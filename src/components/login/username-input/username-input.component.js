@@ -86,7 +86,7 @@ export default class LoginUsernameInput extends React.Component {
                 
                 <UsernameInput   
                     onChange={this.handleUsername.bind(this)}
-                    placeholder="CKDexterHaven"  
+                    placeholder="MStewart"  
                     required
                     id="login-username-input"
                     value={this.state.inputVal}
@@ -96,7 +96,7 @@ export default class LoginUsernameInput extends React.Component {
                 
                 <Dropdown open={this.state.invalid !== null && this.state.invalid}>
                     <div className="alert alert-danger">
-                     Cannot be blank. Only letters, numbers, and underscores allowed.
+                     Only letters, numbers, and underscores allowed.
                     </div>
                 </Dropdown>
             </div>
