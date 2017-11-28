@@ -2,7 +2,6 @@ import React from 'react';
 import {Link, withRouter} from 'react-router-dom';
 
 import IconBadge from '../../_icon-badge/icon-badge.component';
-import {MainNav, BackBtn} from '../../_main-nav/_components';
 import ConfirmDeleteModal from './confirmDelete.modal';
 import "./not-editing.style.css";
 

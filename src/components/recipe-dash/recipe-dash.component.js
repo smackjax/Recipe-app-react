@@ -1,9 +1,7 @@
 import React from 'react';
 
-import {getAllRecipes} from '../../App-state-functions';
-
 import RecipeFilters from './recipe-filters/recipe-filters.component';
-import RecipeNav from './nav/recipe-list-nav.component';
+
 import RecipeList from '../_recipe-list/recipe-list.component';
 import NewRecipeBtn from './new-recipe-btn/new-recipe-btn.component';
 

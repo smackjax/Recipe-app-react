@@ -1,5 +1,4 @@
 import React from 'react';
-import { checkPasswordValid } from '../../../_data/serverData';
 
 import UpdateUserInfoControls from './update-user-info-controls/update-user-info-controls.component';
 import CheckUserPassword from './check-user-password/check-user-password.component';

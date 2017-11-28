@@ -1,6 +1,5 @@
 import React from 'react';
-import {recipesIntoArray, getAllRecipes} from '../../App-state-functions';
-import FriendDetailsHeader from './_header/friend-details.header.js';
+import {getAllRecipes} from '../../App-state-functions';
 import FriendInfoBlock from './info-block/info-block.component';
 import RecipeList from '../_recipe-list/recipe-list.component';
 

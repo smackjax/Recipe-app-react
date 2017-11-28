@@ -1,5 +1,4 @@
 import React from 'react';
-import IconBadge from '../../_icon-badge/icon-badge.component';
 import './name.css';
 
 export default (props)=>{

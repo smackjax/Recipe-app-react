@@ -1,8 +1,7 @@
 import React from 'react';
 import * as dataFuncs from '../../_data/data';
 
-import FriendsNav from './nav/friends-nav.component';
-
+// Components
 import FriendSearch from './friend-search/friend-search.component';
 import AddFriendResult from './add-friend-result/add-friend-result.component';
 import FriendCount from './friend-count/friend-count.component';

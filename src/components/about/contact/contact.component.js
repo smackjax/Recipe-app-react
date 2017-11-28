@@ -22,7 +22,7 @@ export default (props)=>{
                     </a>
 
 
-                    <a href="https://www.maxbernard.design" target="_blank" className="list-group-item">
+                    <a href="https://www.maxbernard.design" rel="noopener noreferrer" target="_blank" className="list-group-item">
                         <i className="fa fa-globe"></i> MaxBernard.Design
                     </a>
 
