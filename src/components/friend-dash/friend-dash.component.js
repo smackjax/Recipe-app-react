@@ -25,7 +25,6 @@ export default class FriendDash extends React.Component{
             this.props.token,
             searchString
         ).then(newFriendData=>{
-            console.log(newFriendData);
             if(!newFriendData){
                 throw Error("Friend not found");    
             } 

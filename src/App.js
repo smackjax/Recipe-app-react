@@ -47,27 +47,20 @@ class App extends Component {
   componentDidMount(){
     // Makes spinner appear until all data loaded
     this.handleLoadingSpinner(true);
-    
      // Load data if local token
     const JWT = dataFuncs.loadToken();
-    console.log("local JWT: ", JWT);
     if(JWT){
       this.setState({token: JWT});
 
-      // If it can't clear any backlog, data will just be local storage
+      // Load all data from the serve(or cache)
       // TODO handle a 401(bad token) response
-      dataFuncs.loadAllData( 
-        JWT, 
-        this.handleServerSyncState.bind(this) 
-      // Takes the returned data from either local or the server. 
-      ).then((appData)=>{
+      dataFuncs.loadAllData(JWT)
+      .then((appData)=>{
         this.setAppData(appData);
       })
       .catch(error=>{
-        // If there's an error here, then there's a big problem,
-        // should have defaulted to using localStorage
         this.handleLoadingSpinner(false);
-        console.log("Data didn't default to local storage. That's bad. ", error);
+        console.log("Error from App compDidMount: ", error);
       });
       
     }
@@ -77,22 +70,27 @@ class App extends Component {
     this.setState({loadingData: status})
   }
 
-  handleServerSyncState(status){
-    this.setState({serverSynchronized: status});
-  }
 
   // Updates relevant state with any new data coming in
   setAppData(data){
+    console.log("Data from server: ", data);
     try{
       // If no values passed in, won't try to update that piece of state
       const newVals = {};
-      if(data.friends) newVals.friends = 
-        appFuncs.allFriendRecipesToArrays(data.friends);
+      if(data.friendsInfo) {
+        newVals.friends = 
+          appFuncs.allFriendRecipesToArrays(data.friendsInfo);
+      }
       // Preserve current values not in new userInfo(TODO may not be needed anymore)
-      if(data.userInfo) newVals.userInfo = {
-        ...this.state.userInfo,
-        ...data.userInfo
-      };
+      if(data.userInfo){
+        newVals.userInfo = {
+          ...this.state.userInfo,
+          ...data.userInfo
+        };
+      }
+      if(data.token){
+        newVals.token = data.token;
+      }
     this.setState({...newVals},
     ()=>{
       this.handleLoadingSpinner(false);
@@ -114,55 +112,61 @@ class App extends Component {
     // Deletes token from userInfo
     const parsedInfo = {...newVals };
     delete parsedInfo.token;
+
     // Then saves userInfo to Local
     dataFuncs.saveUserInfo(parsedInfo);
 
     const appData = 
       await dataFuncs.loadAllData(
-        newVals.token, 
-        this.handleServerSyncState.bind(this)
+        newVals.token
     );
-
-    // updates App with all data
-    this.setState(
-      {
-      userInfo: {...parsedInfo},
-      ...appData,
-      token: newVals.token
-      }
-    , ()=>{
-      // Stop spinner
-      this.handleLoadingSpinner(false);
-    });
-    
+    // Adds token to save to state
+    appData.token = newVals.token;
+    this.setAppData(appData);
   }
 
   // resets all data and clears local
-  // TODO clear all data, not just userInfo
   logoutUser(){
     this.setState({...initialAppState});
     dataFuncs.logoutUser();
   }
 
   // **Recipe Data Handling Funcs
-  saveRecipe(newRecipe){
-    const updatedUserInfo =
-      dataFuncs.saveRecipe(
+  async saveRecipe(newRecipe){
+    try {
+      await dataFuncs.saveRecipe(
         this.state.token, 
-        newRecipe, 
-        this.handleServerSyncState.bind(this));
-    this.setState({userInfo: updatedUserInfo})
+        newRecipe
+      );
+      const newRecipes = {...this.state.userInfo.recipes, [newRecipe.id]: newRecipe};
+      const newInfo = { ...this.state.userInfo, recipes: newRecipes };
+      this.setState({userInfo: newInfo},
+      console.log("state after save: ", this.state));
+    } catch (err){
+      console.log("Error in saveRecipe: ", err);
+    }
   }
-  deleteRecipe(recipeId){
-    const newUserInfo = dataFuncs.deleteRecipe(
-      this.state.token,
-      recipeId,
-      this.handleServerSyncState.bind(this));
-    this.setState({userInfo: newUserInfo});
+
+  async deleteRecipe(recipeId){
+    try {
+      await dataFuncs.deleteRecipe(
+        this.state.token,
+        recipeId
+      );
+      // Spread current recipes into new object
+      const newRecipes = {...this.state.userInfo.recipes}
+      // Delete recipe
+      delete newRecipes[recipeId];
+      // Assign new recipes to new info
+      const newInfo = {...this.state.userInfo, recipes: newRecipes };
+      this.setState({userInfo: newInfo});
+    } catch (err) {
+      console.log("Error from deleteRecipe: ", err);
+    }
   }
 
   // **Friend data handling
-  async addFriend(newFriendData){
+  addFriend(newFriendData){
       const newFriends = [
         ...this.state.friends,
         newFriendData
@@ -170,17 +174,19 @@ class App extends Component {
       this.setState({friends: newFriends});
   }
 
-  deleteFriend(friendId){
-    dataFuncs.deleteFriend(
-      this.state.token, 
-      friendId,
-      this.handleServerSyncState.bind(this)
-    )
-    .then(newFriends=>{
+  async deleteFriend(deleteId){
+    try {
+      await dataFuncs.deleteFriend(this.state.token, deleteId);
+      console.log("current friends: ", this.state.friends);
+      const newFriends = 
+        this.state.friends.filter(friend=>friend.userId !== deleteId);
+      console.log("newFriends: ", newFriends);
       this.setState({friends: newFriends});
-    })
+    } 
+    catch(err){
+      console.log("Error from deleteFriend: ", err);
+    }
   }
-
 
 
   // ** Change settings functions 
@@ -279,10 +285,6 @@ class App extends Component {
     // If there is a state.token (signed in), carry on
     return (
       <div>
-        { // Display 'not synchronized' button 
-        !this.state.serverSynchronized &&(
-          <NotConnected />
-        )}    
         <MainNav />
 
         <Switch>
