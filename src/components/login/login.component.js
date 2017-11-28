@@ -85,7 +85,7 @@ export default class LoginComponent extends React.Component{
         return (
             <div className="login-existing-user-page">
                 <div className="login-logo-wrapper">
-                    <img src={Logo} alt="Recipe-app logo" className="login-logo-img" />
+                    <img src={Logo} alt="Incooknito Kitchen" className="login-logo-img" />
                 </div>
 
                 <HeaderInfo

@@ -8,10 +8,12 @@ import {
 
 // Data functions
 import * as dataFuncs from './_data/data.js';
-import initialAppState from './_data/initialState.js';
 
 // App state functions
 import * as appFuncs from './App-state-functions';
+
+// Initial state
+import initialAppState from './_data/initialState.js';
 
 // Components
 import MainNav from './components/nav/nav.component';
@@ -48,10 +50,12 @@ class App extends Component {
     
      // Load data if local token
     const JWT = dataFuncs.loadToken();
+    console.log("local JWT: ", JWT);
     if(JWT){
       this.setState({token: JWT});
 
       // If it can't clear any backlog, data will just be local storage
+      // TODO handle a 401(bad token) response
       dataFuncs.loadAllData( 
         JWT, 
         this.handleServerSyncState.bind(this) 
@@ -67,13 +71,6 @@ class App extends Component {
       });
       
     }
-  }
-
-  componentWillReceiveProps(newProps){
-    const newPathName = newProps.location.pathname;
-    const currentPathName = this.props.location.pathName;
-    // Attempts to save any backlog on each route change
-      this.saveBacklog();
   }
 
   handleLoadingSpinner(status){
@@ -146,19 +143,6 @@ class App extends Component {
     this.setState({...initialAppState});
     dataFuncs.logoutUser();
   }
-
-
-  saveBacklog(){
-    console.log("Save backlog run");
-    // TODO Redesign data funcs to handleServerState on this side
-    // I don't like passing in a function to handle it.
-    // IDEA: in line with that, maybe extract these functions to a separate file
-    dataFuncs.saveBacklogManually(
-      this.state.token,
-      this.handleServerSyncState.bind(this)
-    );
-  }
-
 
   // **Recipe Data Handling Funcs
   saveRecipe(newRecipe){

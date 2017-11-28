@@ -20,9 +20,6 @@ export function loadAllData(token, handleServerSyncStatus){
 export function saveRecipe (token, newRecipe, handleServerSyncStatus){
     return serverData.saveRecipes(token, [newRecipe]);
 }
-export function deleteRecipe(token, recipeId){
-    return serverData.deleteRecipesById(token, [recipeId]);
-}
 
 
 export async function addFriend(token, username){

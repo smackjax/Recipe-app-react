@@ -6,6 +6,9 @@ const api = axios.create({
 });
 
 // All functions return an axios request(a Promise)
+// axios defaults to json
+
+// TODO change server to handle/only take arrays
 
 // ** Login/create new
 // Returns only this user's info
@@ -20,6 +23,7 @@ export const createNewUser = (username, email, displayName, password)=>{
 }
 
 export const loginExistingUser = (username, password)=>{
+    console.log("User login creds: ", username, " ", password);
     const reqBody = {
         username,
         password
@@ -30,6 +34,7 @@ export const loginExistingUser = (username, password)=>{
 // ** Get data(from sign in or opening app if logged in)
 // Returns all user data(including recipes and friend info)
 export const getUserData = async (token)=>{
+    console.log("Token in getData request: ", token);
     const response = await api.post('/user', {}, { 
         headers: {"Authorization" : "Bearer " + token}
     });

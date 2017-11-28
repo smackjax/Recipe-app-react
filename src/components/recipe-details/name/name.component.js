@@ -24,7 +24,7 @@ export default (props)=>{
         </div> :
         // If not editing
         <div className="row recipe-header mb-3">
-            <h4 className="offset-sm-1 col-sm-10"><b>{props.value}</b></h4>
+            <h4 className="offset-sm-1 col-sm-10 text-center"><b>{props.value}</b></h4>
 
         </div>  
         
