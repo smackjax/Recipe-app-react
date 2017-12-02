@@ -73,7 +73,6 @@ class App extends Component {
 
   // Updates relevant state with any new data coming in
   setAppData(data){
-    console.log("Data from server: ", data);
     try{
       // If no values passed in, won't try to update that piece of state
       const newVals = {};
