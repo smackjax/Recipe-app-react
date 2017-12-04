@@ -3,7 +3,6 @@ import * as dataFuncs from '../../_data/data';
 
 // Components
 import FullscreenSpinner from '../_full-screen-spinner/full-screen-spinner.component'
-import FriendsNav from './nav/friends-nav.component';
 
 import FriendSearch from './friend-search/friend-search.component';
 import AddFriendResult from './add-friend-result/add-friend-result.component';

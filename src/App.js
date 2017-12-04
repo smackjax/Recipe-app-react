@@ -18,7 +18,6 @@ import initialAppState from './_data/initialState.js';
 // Components
 import MainNav from './components/nav/nav.component';
 
-import NotConnected from './components/_not-connected/not-connected.component';
 import FullscreenSpinner from './components/_full-screen-spinner/full-screen-spinner.component';
 
 import LoginComponent from './components/login/login.component';
