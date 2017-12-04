@@ -132,6 +132,7 @@ class App extends Component {
 
   // **Recipe Data Handling Funcs
   async saveRecipe(newRecipe){
+    this.handleLoadingSpinner(true);
     try {
       await dataFuncs.saveRecipe(
         this.state.token, 
@@ -144,9 +145,11 @@ class App extends Component {
     } catch (err){
       console.log("Error in saveRecipe: ", err);
     }
+    this.handleLoadingSpinner(false);
   }
 
   async deleteRecipe(recipeId){
+    this.handleLoadingSpinner(true);
     try {
       await dataFuncs.deleteRecipe(
         this.state.token,
@@ -162,6 +165,7 @@ class App extends Component {
     } catch (err) {
       console.log("Error from deleteRecipe: ", err);
     }
+    this.handleLoadingSpinner(false);
   }
 
   // **Friend data handling
@@ -175,7 +179,7 @@ class App extends Component {
 
   async deleteFriend(deleteId){
     // Loader overlays whole app
-    this.setState({loadingData: true});
+    this.handleLoadingSpinner(true);
     try {
       await dataFuncs.deleteFriend(this.state.token, deleteId);
       const newFriends = 
@@ -185,7 +189,7 @@ class App extends Component {
     catch(err){
       console.log("Error from deleteFriend: ", err);
     }
-    this.setState({loadingData: false});
+    this.handleLoadingSpinner(false);
   }
 
 
@@ -277,11 +281,10 @@ class App extends Component {
     // If there is a state.token (signed in), carry on
     return (
       <div>
-        <MainNav />
-
         { this.state.loadingData &&
           <FullscreenSpinner />
         }
+        <MainNav />
         <Switch>
           <Route path="/recipe-dash" render={PreloadedRecipeDash} />
           <Route path="/recipes/:id" render={PreloadedRecipeSearch} />
