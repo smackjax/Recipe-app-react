@@ -2,7 +2,14 @@ export default {
     // Applies to both local and server data
     loadingData: false,
     // If backlog is clear
-    friends: [/*{:friendInfo}*/],
+    friends: [
+      /*{
+        userId: "",
+        username: "",
+        displayName: "",
+        recipes: []
+      }*/
+    ],
     userInfo: {
       
       "userId" : "",
