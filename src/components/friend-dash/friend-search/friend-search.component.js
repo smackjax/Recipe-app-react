@@ -37,6 +37,7 @@ export default class FriendSearch extends React.Component{
                     onChange={this.handleChange.bind(this)}
                     name="usernameSearch"
                     type="text" 
+                    autoComplete="off"
                     className="form-control" 
                     placeholder="Search users"/>
                     <span className="input-group-btn">
