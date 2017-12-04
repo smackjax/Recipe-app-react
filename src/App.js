@@ -139,8 +139,7 @@ class App extends Component {
       );
       const newRecipes = {...this.state.userInfo.recipes, [newRecipe.id]: newRecipe};
       const newInfo = { ...this.state.userInfo, recipes: newRecipes };
-      this.setState({userInfo: newInfo},
-      console.log("state after save: ", this.state));
+      this.setState({userInfo: newInfo});
     } catch (err){
       console.log("Error in saveRecipe: ", err);
     }

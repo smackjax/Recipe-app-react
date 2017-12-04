@@ -22,8 +22,6 @@ export default class CheckUserPassword extends React.Component{
         e.preventDefault();
         const pass = e.target.passwordCheck.value;
         e.target.reset();
-
-        console.log(pass);
         try{
             await checkPasswordValid(this.props.token, pass);
             this.setState({

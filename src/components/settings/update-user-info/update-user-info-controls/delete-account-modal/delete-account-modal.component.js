@@ -30,7 +30,6 @@ export default class DeleteAccountModal extends React.Component {
         e.preventDefault();
         const userPass = e.target.passConfirm.value;
         e.target.reset();
-        console.log("User Pass: ", userPass);
         this.setState({ closingAccount: true });
         try {
             await closeAccount(this.props.token, userPass);
