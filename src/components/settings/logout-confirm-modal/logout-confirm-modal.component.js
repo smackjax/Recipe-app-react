@@ -1,12 +1,19 @@
 import React from 'react';
+import {logoutUser} from '../../../_data/serverData';
 
 export default (props)=>{
     // props.logout
     // props.inSync
 
     const handleConfirm=()=>{
-    // data-dismiss stops event propagation
+      // Server call for logout always returns 200
+      logoutUser()
+      .catch(()=>{})
+      .then(()=>{
         props.logout();
+      })
+      // data-dismiss(on modal) stops event propagation
+      
     }
 
     // inSync means no data backlog to push to server

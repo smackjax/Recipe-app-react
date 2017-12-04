@@ -27,6 +27,10 @@ export const loginExistingUser = (username, password)=>{
     return api.post('/login/existing', reqBody);
 }
 
+export const logoutUser = ()=>{
+    return api.post("/login/logout");
+}
+
 // ** Get data(from sign in or opening app if logged in)
 // Returns all user data(including recipes and friend info)
 export const getUserData = async (token)=>{
