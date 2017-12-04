@@ -1,6 +1,7 @@
 import React from 'react';
 import * as dataFuncs from '../../_data/data';
 
+import FullscreenSpinner from '../_full-screen-spinner/full-screen-spinner.component'
 import FriendsNav from './nav/friends-nav.component';
 
 import FriendSearch from './friend-search/friend-search.component';
@@ -66,6 +67,11 @@ export default class FriendDash extends React.Component{
         const sortedFriends = this.sortFriends(this.props.friends);
         return(
             <div className="page friend-page">
+                
+                { // If searching for friend, block user interaction
+                this.state.findingFriend && 
+                <FullscreenSpinner /> }
+
                 <hr />
 
                 <FriendSearch 

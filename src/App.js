@@ -19,7 +19,7 @@ import initialAppState from './_data/initialState.js';
 import MainNav from './components/nav/nav.component';
 
 import NotConnected from './components/_not-connected/not-connected.component';
-import LoadingSpinner from './components/_loading-spinner/loading-spinner.component';
+import FullscreenSpinner from './components/_full-screen-spinner/full-screen-spinner.component';
 
 import LoginComponent from './components/login/login.component';
 import RecipeSearch from './components/recipe-search/recipe-search.component';
@@ -174,17 +174,18 @@ class App extends Component {
   }
 
   async deleteFriend(deleteId){
+    // Loader overlays whole app
+    this.setState({loadingData: true});
     try {
       await dataFuncs.deleteFriend(this.state.token, deleteId);
-      console.log("current friends: ", this.state.friends);
       const newFriends = 
         this.state.friends.filter(friend=>friend.userId !== deleteId);
-      console.log("newFriends: ", newFriends);
       this.setState({friends: newFriends});
     } 
     catch(err){
       console.log("Error from deleteFriend: ", err);
     }
+    this.setState({loadingData: false});
   }
 
 
@@ -218,15 +219,6 @@ class App extends Component {
       return <LoginComponent
       saveUserInfo={this.loginUser.bind(this)}/> 
     }
-
-    if(this.state.loadingData){
-      return (
-        <div className="loading-page">
-          <LoadingSpinner />
-        </div>
-      )
-    }
-
 
 
     // Preloads props for routes
@@ -280,12 +272,16 @@ class App extends Component {
     }
 
     
+    
 
     // If there is a state.token (signed in), carry on
     return (
       <div>
         <MainNav />
 
+        { this.state.loadingData &&
+          <FullscreenSpinner />
+        }
         <Switch>
           <Route path="/recipe-dash" render={PreloadedRecipeDash} />
           <Route path="/recipes/:id" render={PreloadedRecipeSearch} />
