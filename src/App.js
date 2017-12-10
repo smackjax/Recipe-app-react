@@ -273,8 +273,7 @@ class App extends Component {
               />
     }
 
-    
-    
+    const ToDash=()=><Redirect to='/recipe-dash' />
 
     // If there is a state.token (signed in), carry on
     return (
@@ -290,7 +289,7 @@ class App extends Component {
           <Route path="/friends" component={PreloadedFriendSwitch} />
           <Route path="/settings" render={PreloadedSettings} /> 
           <Route path="/info" component={AboutPage} />
-          <Redirect from="/" to="recipe-dash"/>
+          <Route component={ToDash} />
         </Switch>
       </div>
     );

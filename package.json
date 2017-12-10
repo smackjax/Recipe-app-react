@@ -1,7 +1,7 @@
 {
   "name": "recipe-front-end",
   "proxy": "http://localhost:1337",
-  "homepage": "http://localhost:1337/app",
+  "homepage": ".",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
